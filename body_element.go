@@ -1,8 +1,6 @@
 package tfsig
 
 import (
-	"fmt"
-
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/zclconf/go-cty/cty"
 )
@@ -59,7 +57,7 @@ func (e BodyElement) GetBodyBlock() *BlockSignature {
 // Build will panic if element is not a block !
 func (e BodyElement) Build() *hclwrite.Block {
 	if !e.IsBodyBlock() {
-		panic(fmt.Sprintf("Element is not a block"))
+		panic("Element is not a block")
 	}
 
 	return e.block.Build()
