@@ -58,7 +58,7 @@ jobs:
         run: make configure-test-env
 
       - name: Staticcheck
-        run: make staticcheck
+        run: make test-staticcheck
 
       - name: Lint
         run: make test-lint
