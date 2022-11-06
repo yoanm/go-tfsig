@@ -34,6 +34,9 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
 
+      - name: Upload coverage to Codacy
+        uses: codacy/codacy-coverage-reporter-action@v1
+
   static:
     name: Static checks
     runs-on: ubuntu-latest
