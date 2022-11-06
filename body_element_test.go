@@ -5,7 +5,7 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/yoanm/tfsig/testutils"
+	"github.com/yoanm/go-tfsig/testutils"
 )
 
 func TestBodyBlockBuild_panic(t *testing.T) {

@@ -7,7 +7,7 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
 
-	"github.com/yoanm/tfsig/testutils"
+	"github.com/yoanm/go-tfsig/testutils"
 )
 
 func TestGenerate(t *testing.T) {

@@ -1,4 +1,4 @@
-module github.com/yoanm/tfsig
+module github.com/yoanm/go-tfsig
 
 go 1.18
 

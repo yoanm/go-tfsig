@@ -7,8 +7,8 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
 
-	"github.com/yoanm/tfsig/testutils"
-	"github.com/yoanm/tfsig/tokens"
+	"github.com/yoanm/go-tfsig/testutils"
+	"github.com/yoanm/go-tfsig/tokens"
 )
 
 func TestNewEmptyResource(t *testing.T) {

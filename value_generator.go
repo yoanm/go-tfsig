@@ -6,7 +6,7 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/yoanm/tfsig/tokens"
+	"github.com/yoanm/go-tfsig/tokens"
 )
 
 type ValueGenerator struct {
