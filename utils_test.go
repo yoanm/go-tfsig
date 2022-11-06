@@ -5,7 +5,7 @@ import (
 
 	"github.com/hashicorp/hcl/v2/hclwrite"
 
-	"github.com/yoanm/tfsig/testutils"
+	"github.com/yoanm/go-tfsig/testutils"
 )
 
 func TestAppendNewLineAndBlockIfNotNil(t *testing.T) {

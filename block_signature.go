@@ -4,7 +4,7 @@ import (
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/zclconf/go-cty/cty"
 
-	"github.com/yoanm/tfsig/tokens"
+	"github.com/yoanm/go-tfsig/tokens"
 )
 
 /** Public **/
