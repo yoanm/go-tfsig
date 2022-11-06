@@ -36,6 +36,10 @@ jobs:
 
       - name: Upload coverage to Codacy
         uses: codacy/codacy-coverage-reporter-action@v1
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: coverage.out
+          force-coverage-parser: go
 
   static:
     name: Static checks
@@ -64,4 +68,4 @@ jobs:
         run: make test-staticcheck
 
       - name: Lint
-        run: make test-lint
+        run: make test-lint lint_o="-set_exit_status"
