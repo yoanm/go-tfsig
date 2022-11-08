@@ -58,7 +58,7 @@ test-vet:
 
 test-lint: ## 🏃 Launch go lint
 #### Use lint_o="..." to specify options (-set_exit_status for instance)
-$(eval lint_o ?=)
+$(eval lint_o ?=-set_exit_status)
 test-lint:
 	golint $(lint_o) ./...
 

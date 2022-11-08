@@ -4,10 +4,13 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
-func IsCapsule(attrType cty.Type) bool {
-	return attrType.IsCapsuleType() && attrType.FriendlyName() == HclwriteTokensCtyTypeName
+// IsCapsuleType returns true if provided cty.Type is a special capsule encapsulating hclwrite.Tokens
+func IsCapsuleType(t cty.Type) bool {
+	return t.IsCapsuleType() && t.FriendlyName() == HclwriteTokensCtyTypeName
 }
 
+// ContainsCapsule will deep check if provided value contains a special capsule encapsulating hclwrite.Tokens
+// (and therefore requires special process to de-encapsulate it)
 func ContainsCapsule(valPtr *cty.Value) bool {
 	if valPtr == nil {
 		return false
@@ -17,10 +20,11 @@ func ContainsCapsule(valPtr *cty.Value) bool {
 	valType := val.Type()
 	switch {
 	case valType.IsListType() || valType.IsSetType() || valType.IsTupleType():
-		// List and set contain only one type of value
 		if valType.IsListType() || valType.IsSetType() {
-			return IsCapsule(valType.ElementType())
+			// List and set contain only one type of value
+			return IsCapsuleType(valType.ElementType())
 		}
+		// Tuple contains multiple value type => iterate over each of them and check
 		for it := val.ElementIterator(); it.Next(); {
 			_, eVal := it.Element()
 			if ContainsCapsule(&eVal) {
@@ -29,10 +33,11 @@ func ContainsCapsule(valPtr *cty.Value) bool {
 		}
 
 	case valType.IsMapType() || valType.IsObjectType():
-		// Map contains only one type of value
 		if valType.IsMapType() {
-			return IsCapsule(valType.ElementType())
+			// Map contains only one type of value
+			return IsCapsuleType(valType.ElementType())
 		}
+		// Object contains multiple value type => iterate over each of them and check
 		// TODO check keys also ????
 		for it := val.ElementIterator(); it.Next(); {
 			_, eVal := it.Element()
@@ -41,7 +46,7 @@ func ContainsCapsule(valPtr *cty.Value) bool {
 			}
 		}
 
-	case IsCapsule(valType):
+	case IsCapsuleType(valType):
 		return true
 	}
 

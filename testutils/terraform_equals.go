@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
 
+// LoadGoldenFile loads the golden file filename located under 'testdata' directory
+// It takes care of suffixing the filename with ".golden.tf"
 func LoadGoldenFile(filename string) (*string, error) {
 	fp := filepath.Join("testdata", filename+".golden.tf")
 	if _, err := os.Stat(fp); os.IsNotExist(err) {
@@ -25,6 +27,7 @@ func LoadGoldenFile(filename string) (*string, error) {
 	return &c, nil
 }
 
+// EnsureFileContentEquals checks that provided hclwrite.File content is equals to the expected string
 func EnsureFileContentEquals(file *hclwrite.File, expected string) error {
 	actual := string(file.Bytes())
 	if actual != expected {
@@ -34,6 +37,7 @@ func EnsureFileContentEquals(file *hclwrite.File, expected string) error {
 	return nil
 }
 
+// EnsureBlockFileEqualsGoldenFile checks that provided hclwrite.Block content is equals to the content of the provided golden file
 func EnsureBlockFileEqualsGoldenFile(block *hclwrite.Block, goldenFile string) error {
 	hclFile := hclwrite.NewEmptyFile()
 
@@ -44,6 +48,7 @@ func EnsureBlockFileEqualsGoldenFile(block *hclwrite.Block, goldenFile string) e
 	return EnsureFileEqualsGoldenFile(hclFile, goldenFile)
 }
 
+// EnsureFileEqualsGoldenFile checks that provided hclwrite.File content is equals to the content of the provided golden file
 func EnsureFileEqualsGoldenFile(f *hclwrite.File, goldenFile string) error {
 	expected, err := LoadGoldenFile(goldenFile)
 	if err != nil {

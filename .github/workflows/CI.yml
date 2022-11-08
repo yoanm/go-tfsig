@@ -68,4 +68,4 @@ jobs:
         run: make test-staticcheck
 
       - name: Lint
-        run: make test-lint lint_o="-set_exit_status"
+        run: make test-lint

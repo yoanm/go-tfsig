@@ -153,7 +153,7 @@ func TestGenerateFromIterable_panic(t *testing.T) {
 		t,
 		"Basic",
 		func() {
-			GenerateFromIterable(cty.String, nil)
+			GenerateFromIterable(nil, cty.String)
 		},
 		expectedError,
 	)

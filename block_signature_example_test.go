@@ -30,7 +30,7 @@ func Example() {
 	// }
 }
 
-func Example_second() {
+func Example_enhanceExisting() {
 	// Enhance an existing signature
 	sig := NewEmptyResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
@@ -68,7 +68,7 @@ func Example_second() {
 	// }
 }
 
-func Example_third() {
+func Example_reorder() {
 	sig := NewEmptyResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 	sig.AppendAttribute("attribute2", cty.BoolVal(true))
