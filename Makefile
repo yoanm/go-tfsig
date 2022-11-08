@@ -38,6 +38,13 @@ verify: ## 🗜️  Verify dependencies
 verify:
 	go mod verify
 
+.PHONY: format
+format: ## 🗜️  Format code with go fmt command
+#### Use format_o="..." to specify format options
+$(eval format_o ?=)
+format:
+	gofmt -w -s $(format_o) .
+
 
 ##—— 🧪️ Tests —————————————————————————————————————————————————————————————
 .PHONY: test

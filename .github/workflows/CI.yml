@@ -11,35 +11,35 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Go
-        uses: actions/setup-go@v3
-        with:
-          go-version-file: ./go.mod
-          check-latest: true
-          cache: true
-          cache-dependency-path: ./go.sum
-
-      - name: Build
-        run: make build
-
-      - name: Run tests
-        run: make test-go gotest_o="-race -covermode=atomic -coverprofile=coverage.out"
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-
-      - name: Upload coverage to Codacy
-        uses: codacy/codacy-coverage-reporter-action@v1
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: coverage.out
-          force-coverage-parser: go
+#  coverage:
+#    name: Coverage
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#
+#      - name: Set up Go
+#        uses: actions/setup-go@v3
+#        with:
+#          go-version-file: ./go.mod
+#          check-latest: true
+#          cache: true
+#          cache-dependency-path: ./go.sum
+#
+#      - name: Build
+#        run: make build
+#
+#      - name: Run tests
+#        run: make test-go gotest_o="-race -covermode=atomic -coverprofile=coverage.out"
+#
+#      - name: Upload coverage to Codecov
+#        uses: codecov/codecov-action@v3
+#
+#      - name: Upload coverage to Codacy
+#        uses: codacy/codacy-coverage-reporter-action@v1
+#        with:
+#          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+#          coverage-reports: coverage.out
+#          force-coverage-parser: go
 
   static:
     name: Static checks
@@ -55,17 +55,30 @@ jobs:
           cache: true
           cache-dependency-path: ./go.sum
 
-      - name: Verify dependencies
-        run: make verify
+#      - name: Verify dependencies
+#        run: make verify
+#
+#      - name: Go vet
+#        run: make test-vet
+#
+#      - name: Install test libs
+#        run: make configure-test-env
+#
+#      - name: Staticcheck
+#        run: make test-staticcheck
+#
+#      - name: Lint
+#        run: make test-lint
 
-      - name: Go vet
-        run: make test-vet
+      - name: Format
+        run: |
+          if [ ! "$(gofmt -l . | wc -l)" -eq 0 ]; then
+              # Create file annotations
+              echo "::error::Following files need formatting:"
+              gofmt -l . | while read line ; do echo "::error file=$line::$line is wrongly formatted" ; done;
+              exit 1;
+          fi
+          echo "All files correctly formatted 👌"
+          exit 0
 
-      - name: Install test libs
-        run: make configure-test-env
 
-      - name: Staticcheck
-        run: make test-staticcheck
-
-      - name: Lint
-        run: make test-lint
