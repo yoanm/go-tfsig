@@ -24,9 +24,9 @@ func ExampleAppendBlockIfNotNil() {
 	evenFn := func(i int) *hclwrite.Block {
 		if i%2 == 0 {
 			return nil
-		} else {
-			return NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
 		}
+
+		return NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
 	}
 
 	AppendBlockIfNotNil(hclFile.Body(), evenFn(0))
@@ -48,9 +48,9 @@ func ExampleAppendNewLineAndBlockIfNotNil() {
 	oddFn := func(i int) *hclwrite.Block {
 		if i%2 != 0 {
 			return nil
-		} else {
-			return NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
 		}
+
+		return NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
 	}
 
 	AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(0))

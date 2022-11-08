@@ -8,6 +8,8 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
+// Generate converts a cty.Value to hclwrite.Tokens
+// It takes care of special cty.Value capsule encapsulating hclwrite.Tokens
 func Generate(valuePtr *cty.Value) hclwrite.Tokens {
 	var value cty.Value
 	if valuePtr != nil {
@@ -27,7 +29,7 @@ func Generate(valuePtr *cty.Value) hclwrite.Tokens {
 					currentIndex++
 				}
 
-				return GenerateFromIterable(valType, newElements)
+				return GenerateFromIterable(newElements, valType)
 			}
 
 		case valType.IsMapType() || valType.IsObjectType():
@@ -41,9 +43,9 @@ func Generate(valuePtr *cty.Value) hclwrite.Tokens {
 					currentIndex++
 				}
 
-				return GenerateFromIterable(valType, newElements)
+				return GenerateFromIterable(newElements, valType)
 			}
-		case IsCapsule(value.Type()):
+		case IsCapsuleType(value.Type()):
 			return FromValue(value)
 		}
 	} else {
@@ -53,8 +55,9 @@ func Generate(valuePtr *cty.Value) hclwrite.Tokens {
 	return hclwrite.TokensForValue(value)
 }
 
-// GenerateFromIterable will panic if provided type is not an iterable type
-func GenerateFromIterable(t cty.Type, elements []hclwrite.Tokens) hclwrite.Tokens {
+// GenerateFromIterable takes a list of hclwrite.Tokens and create related hclwrite.Tokens based on the provided cty.Type
+// It panics if provided type is not an iterable type
+func GenerateFromIterable(elements []hclwrite.Tokens, t cty.Type) hclwrite.Tokens {
 	var emptyCollectionValue cty.Value
 	switch {
 	case t.IsListType():
@@ -74,7 +77,8 @@ func GenerateFromIterable(t cty.Type, elements []hclwrite.Tokens) hclwrite.Token
 	return MergeIterableAndGenerate(emptyCollectionValue, elements)
 }
 
-// MergeIterableAndGenerate will panic if provided value is not iterable
+// MergeIterableAndGenerate takes a cty.Value collection, append new elements and convert the result to related hclwrite.Tokens
+// It panics if provided collection is not iterable
 func MergeIterableAndGenerate(collection cty.Value, newElements []hclwrite.Tokens) hclwrite.Tokens {
 	tokensStart, existingElements, tokensEnd := SplitIterable(collection)
 
@@ -111,7 +115,9 @@ func MergeIterableAndGenerate(collection cty.Value, newElements []hclwrite.Token
 	return tokensEnd.BuildTokens(newTokens)
 }
 
-// SplitIterable will panic if provided value is not iterable
+// SplitIterable takes a cty.Value collection and returns the start/end tokens and the existing elements
+// It panics if provided collection is not iterable
+// It can be used to later append new elements to the collection (see MergeIterableAndGenerate())
 func SplitIterable(collection cty.Value) (tokensStart hclwrite.Tokens, elements hclwrite.Tokens, tokensEnd hclwrite.Tokens) {
 	if !collection.CanIterateElements() {
 		panic(fmt.Sprintf("expected an iterable type but got %s", collection.Type().GoString()))

@@ -9,6 +9,7 @@ import (
 
 /** Public **/
 
+// NewSignature returns a BlockSignature pointer filled with provided labels and elements
 func NewSignature(name string, labels []string, elements BodyElements) *BlockSignature {
 	return &BlockSignature{
 		typeName: name,
@@ -16,56 +17,77 @@ func NewSignature(name string, labels []string, elements BodyElements) *BlockSig
 		elements: elements,
 	}
 }
+
+// NewEmptySignature returns a BlockSignature pointer filled with provided labels
 func NewEmptySignature(name string, labels ...string) *BlockSignature {
 	return NewSignature(name, labels, BodyElements{})
 }
 
+// NewEmptyResource returns a BlockSignature pointer with "resource" type and filled with provided labels
 func NewEmptyResource(name, id string, labels ...string) *BlockSignature {
 	return NewEmptySignature("resource", append([]string{name, id}, labels...)...)
 }
 
+// BlockSignature is basically a wrapper to HCL blocks
+// It holds a type, the block labels and its elements
 type BlockSignature struct {
 	typeName string
 	labels   []string
 	elements BodyElements
 }
 
-func (signature *BlockSignature) GetType() string {
-	return signature.typeName
-}
-func (signature *BlockSignature) GetLabels() []string {
-	return signature.labels
-}
-func (signature *BlockSignature) GetElements() BodyElements {
-	return signature.elements
-}
-func (signature *BlockSignature) SetElements(elements BodyElements) {
-	signature.elements = elements
-}
-func (signature *BlockSignature) AppendElement(element BodyElement) {
-	signature.elements = append(signature.elements, element)
+// GetType returns the type of the block
+func (s *BlockSignature) GetType() string {
+	return s.typeName
 }
 
-func (signature *BlockSignature) AppendAttribute(name string, value cty.Value) {
-	signature.AppendElement(NewBodyAttribute(name, value))
-}
-func (signature *BlockSignature) AppendChild(child *BlockSignature) {
-	signature.AppendElement(NewBodyBlock(child))
-}
-func (signature *BlockSignature) AppendEmptyLine() {
-	signature.AppendElement(NewBodyEmptyLine())
+// GetLabels returns labels attached to the block
+func (s *BlockSignature) GetLabels() []string {
+	return s.labels
 }
 
-func (signature *BlockSignature) Build() *hclwrite.Block {
-	block := hclwrite.NewBlock(signature.GetType(), signature.GetLabels())
+// GetElements returns all elements attached to the block
+func (s *BlockSignature) GetElements() BodyElements {
+	return s.elements
+}
 
-	signature.WriteElementsToBody(block.Body())
+// SetElements overrides existing elements by provided ones
+func (s *BlockSignature) SetElements(elements BodyElements) {
+	s.elements = elements
+}
+
+// AppendElement appends an element to the block
+func (s *BlockSignature) AppendElement(element BodyElement) {
+	s.elements = append(s.elements, element)
+}
+
+// AppendAttribute appends an attribute to the block
+func (s *BlockSignature) AppendAttribute(name string, value cty.Value) {
+	s.AppendElement(NewBodyAttribute(name, value))
+}
+
+// AppendChild appends a child block to the block
+func (s *BlockSignature) AppendChild(child *BlockSignature) {
+	s.AppendElement(NewBodyBlock(child))
+}
+
+// AppendEmptyLine appends an empty line to the block
+func (s *BlockSignature) AppendEmptyLine() {
+	s.AppendElement(NewBodyEmptyLine())
+}
+
+// Build creates a hclwrite.Block and appends block's elements to it
+func (s *BlockSignature) Build() *hclwrite.Block {
+	block := hclwrite.NewBlock(s.GetType(), s.GetLabels())
+
+	s.WriteElementsToBody(block.Body())
 
 	return block
 }
 
-func (signature *BlockSignature) BuildTokens() (tks hclwrite.Tokens) {
-	if block := signature.Build(); block != nil {
+// BuildTokens builds the block signature as hclwrite.Tokens
+func (s *BlockSignature) BuildTokens() (tks hclwrite.Tokens) {
+	if block := s.Build(); block != nil {
 		blockTks := block.BuildTokens(nil)
 		// Remove trailing new line automatically added (=remove last token)
 		tks = append(hclwrite.Tokens{}, blockTks[0:len(blockTks)-1]...)
@@ -74,8 +96,11 @@ func (signature *BlockSignature) BuildTokens() (tks hclwrite.Tokens) {
 	return tks
 }
 
-func (signature *BlockSignature) WriteElementsToBody(body *hclwrite.Body) {
-	for _, value := range signature.GetElements() {
+// WriteElementsToBody writes all block signature elements to the provided hclwrite.Body
+//
+// It takes care of attribute values containing hclwrite.Tokens encapsulated into a cty capsule
+func (s *BlockSignature) WriteElementsToBody(body *hclwrite.Body) {
+	for _, value := range s.GetElements() {
 		if value.IsBodyBlock() {
 			body.AppendBlock(value.Build())
 		} else if value.IsBodyAttribute() {
@@ -90,7 +115,7 @@ func (signature *BlockSignature) WriteElementsToBody(body *hclwrite.Body) {
 	}
 }
 
-// DependsOn adds an empty line and the 'depends_on terraform directive with provided id list
+// DependsOn adds an empty line and the 'depends_on' terraform directive with provided id list
 func (s *BlockSignature) DependsOn(idList []string) {
 	if idList == nil {
 		return
@@ -100,10 +125,8 @@ func (s *BlockSignature) DependsOn(idList []string) {
 	s.AppendAttribute("depends_on", *tokens.NewIdentListValue(idList))
 }
 
-type LifecycleCondition struct {
-	condition    string
-	errorMessage string
-}
+// LifecycleConfig is used as argument for Lifecycle() method
+// It's basically a wrapper for terraform 'lifecycle' directive
 type LifecycleConfig struct {
 	CreateBeforeDestroy *bool
 	PreventDestroy      *bool
@@ -113,7 +136,14 @@ type LifecycleConfig struct {
 	Postcondition       *LifecycleCondition
 }
 
-// Lifecycle adds an empty line and the 'lifecycle terraform directive, or return the existing signature
+// LifecycleCondition is used for Precondition and Postcondition property of LifecycleConfig
+// It's basically a wrapper for terraform lifecycle pre- and post-conditions
+type LifecycleCondition struct {
+	condition    string
+	errorMessage string
+}
+
+// Lifecycle adds an empty line and the 'lifecycle' terraform directive and then append provided lifecycle attributes
 func (s *BlockSignature) Lifecycle(config LifecycleConfig) {
 	sig := NewEmptySignature("lifecycle")
 
