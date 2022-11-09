@@ -25,9 +25,28 @@ type LifecycleConfig struct {
 	Postcondition       *LifecycleCondition
 }
 
+// SetCreateBeforeDestroy is a simple helper to avoid having to create a boolean variable and then pass the pointer to it
+//
+// E.g: instead of writing
+// createBeforeDestroy = true
+// config := LifecycleConfig{CreateBeforeDestroy: &createBeforeDestroy}
+//
+// Simply write:
+// config := LifecycleConfig{}
+// config.SetCreateBeforeDestroy(true)
 func (c *LifecycleConfig) SetCreateBeforeDestroy(b bool) {
 	c.CreateBeforeDestroy = &b
 }
+
+// SetPreventDestroy is a simple helper to avoid having to create a boolean variable and then pass the pointer to it
+//
+// E.g: instead of writing
+// preventDestroy = false
+// config := LifecycleConfig{PreventDestroy: &preventDestroy}
+//
+// Simply write:
+// config := LifecycleConfig{}
+// config.SetPreventDestroy(true)
 func (c *LifecycleConfig) SetPreventDestroy(b bool) {
 	c.PreventDestroy = &b
 }
