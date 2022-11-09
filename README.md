@@ -18,3 +18,7 @@
 Wrapper for Terraform HCL language (hclwrite)
 
 Generate block **signatures** which are easier to manipulate and alter than hclwrite tokens
+
+## Documentation
+
+Package documentation available [there](./DOC.md)
