@@ -1,3 +1,7 @@
+/*
+Package tfsig is a wrapper for Terraform HCL language (hclwrite).
+It provides ability to generate block signature which are way easier to manipulate and alter than hclwrite.tokens type
+*/
 package tfsig
 
 import (
