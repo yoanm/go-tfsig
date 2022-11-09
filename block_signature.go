@@ -80,7 +80,7 @@ func (s *BlockSignature) AppendEmptyLine() {
 func (s *BlockSignature) Build() *hclwrite.Block {
 	block := hclwrite.NewBlock(s.GetType(), s.GetLabels())
 
-	s.WriteElementsToBody(block.Body())
+	s.writeElementsToBody(block.Body())
 
 	return block
 }
@@ -96,10 +96,12 @@ func (s *BlockSignature) BuildTokens() (tks hclwrite.Tokens) {
 	return tks
 }
 
-// WriteElementsToBody writes all block signature elements to the provided hclwrite.Body
+/** Private **/
+
+// writeElementsToBody writes all block signature elements to the provided hclwrite.Body
 //
 // It takes care of attribute values containing hclwrite.Tokens encapsulated into a cty capsule
-func (s *BlockSignature) WriteElementsToBody(body *hclwrite.Body) {
+func (s *BlockSignature) writeElementsToBody(body *hclwrite.Body) {
 	for _, value := range s.GetElements() {
 		if value.IsBodyBlock() {
 			body.AppendBlock(value.Build())
