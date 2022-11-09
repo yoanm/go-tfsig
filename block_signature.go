@@ -1,3 +1,7 @@
+/*
+Package tfsig is a wrapper for Terraform HCL language (hclwrite).
+It provides ability to generate block signature which are way easier to manipulate and alter than hclwrite.tokens type
+*/
 package tfsig
 
 import (
@@ -80,7 +84,7 @@ func (s *BlockSignature) AppendEmptyLine() {
 func (s *BlockSignature) Build() *hclwrite.Block {
 	block := hclwrite.NewBlock(s.GetType(), s.GetLabels())
 
-	s.WriteElementsToBody(block.Body())
+	s.writeElementsToBody(block.Body())
 
 	return block
 }
@@ -96,10 +100,12 @@ func (s *BlockSignature) BuildTokens() (tks hclwrite.Tokens) {
 	return tks
 }
 
-// WriteElementsToBody writes all block signature elements to the provided hclwrite.Body
+/** Private **/
+
+// writeElementsToBody writes all block signature elements to the provided hclwrite.Body
 //
 // It takes care of attribute values containing hclwrite.Tokens encapsulated into a cty capsule
-func (s *BlockSignature) WriteElementsToBody(body *hclwrite.Body) {
+func (s *BlockSignature) writeElementsToBody(body *hclwrite.Body) {
 	for _, value := range s.GetElements() {
 		if value.IsBodyBlock() {
 			body.AppendBlock(value.Build())
@@ -113,75 +119,4 @@ func (s *BlockSignature) WriteElementsToBody(body *hclwrite.Body) {
 			body.AppendNewline()
 		}
 	}
-}
-
-// DependsOn adds an empty line and the 'depends_on' terraform directive with provided id list
-func (s *BlockSignature) DependsOn(idList []string) {
-	if idList == nil {
-		return
-	}
-
-	s.AppendEmptyLine()
-	s.AppendAttribute("depends_on", *tokens.NewIdentListValue(idList))
-}
-
-// LifecycleConfig is used as argument for Lifecycle() method
-// It's basically a wrapper for terraform 'lifecycle' directive
-type LifecycleConfig struct {
-	CreateBeforeDestroy *bool
-	PreventDestroy      *bool
-	IgnoreChanges       []string
-	ReplaceTriggeredBy  []string
-	Precondition        *LifecycleCondition
-	Postcondition       *LifecycleCondition
-}
-
-// LifecycleCondition is used for Precondition and Postcondition property of LifecycleConfig
-// It's basically a wrapper for terraform lifecycle pre- and post-conditions
-type LifecycleCondition struct {
-	condition    string
-	errorMessage string
-}
-
-// Lifecycle adds an empty line and the 'lifecycle' terraform directive and then append provided lifecycle attributes
-func (s *BlockSignature) Lifecycle(config LifecycleConfig) {
-	sig := NewEmptySignature("lifecycle")
-
-	appendLifecycleBoolAttribute(sig, "create_before_destroy", config.CreateBeforeDestroy)
-	appendLifecycleBoolAttribute(sig, "prevent_destroy", config.PreventDestroy)
-
-	if config.IgnoreChanges != nil {
-		sig.AppendAttribute("ignore_changes", *tokens.NewIdentListValue(config.IgnoreChanges))
-	}
-
-	appendLifecycleConditionBlock(sig, "precondition", config.Precondition)
-	appendLifecycleConditionBlock(sig, "postcondition", config.Postcondition)
-
-	s.AppendEmptyLine()
-	s.AppendChild(sig)
-}
-
-/** Private **/
-
-func appendLifecycleConditionBlock(lifecycleSig *BlockSignature, name string, c *LifecycleCondition) {
-	if c == nil {
-		return
-	}
-	cond := NewEmptySignature(name)
-
-	cond.AppendAttribute("condition", *tokens.NewIdentValue(c.condition))
-	cond.AppendAttribute("error_message", *tokens.NewIdentValue(c.errorMessage))
-
-	lifecycleSig.AppendChild(cond)
-}
-
-func appendLifecycleBoolAttribute(lifecycleSig *BlockSignature, name string, value *bool) {
-	if value == nil {
-		return
-	}
-	val := "false"
-	if *value {
-		val = "true"
-	}
-	lifecycleSig.AppendAttribute(name, *tokens.NewIdentValue(val))
 }

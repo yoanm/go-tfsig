@@ -30,7 +30,7 @@ func Example() {
 	// }
 }
 
-func Example_enhanceExisting() {
+func Example_enhance_existing() {
 	// Enhance an existing signature
 	sig := NewEmptyResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
@@ -56,6 +56,7 @@ func Example_enhanceExisting() {
 
 	// ... Finally
 	hclFile := hclwrite.NewEmptyFile()
+
 	hclFile.Body().AppendBlock(sig.Build())
 
 	fmt.Println(string(hclFile.Bytes()))
@@ -69,6 +70,7 @@ func Example_enhanceExisting() {
 }
 
 func Example_reorder() {
+	// Reorder an existing signature
 	sig := NewEmptyResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 	sig.AppendAttribute("attribute2", cty.BoolVal(true))

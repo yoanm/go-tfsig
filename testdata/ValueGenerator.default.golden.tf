@@ -1,4 +1,4 @@
-sig "var.label1" "local.label2" "data.label3" {
+sig {
   basic          = "basic_value"
   custom         = "custom.my_var"
   local          = local.my_local

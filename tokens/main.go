@@ -1,3 +1,7 @@
+/*
+Package tokens provides an easy way to create common hclwrite tokens (such as new line, comma, equal sign, ident)
+It also provides an easy way to encapsulate hclwrite tokens into a cty.Value and a function (Generate()) to manage those type of value
+*/
 package tokens
 
 import (
