@@ -19,3 +19,9 @@ func TestFromValue_panic(t *testing.T) {
 		expectedError,
 	)
 }
+
+func TestNewIdentListValue_nil(t *testing.T) {
+	if actual := NewIdentListValue(nil); actual != nil {
+		t.Errorf("wrong result: expected nil, got %v", actual)
+	}
+}

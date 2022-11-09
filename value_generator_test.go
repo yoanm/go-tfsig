@@ -118,3 +118,17 @@ func TestValueGenerator_panic(t *testing.T) {
 		expectedError,
 	)
 }
+
+func TestToIdent_nil(t *testing.T) {
+	valGen := NewValueGenerator()
+	if actual := valGen.ToIdent(nil); actual != nil {
+		t.Errorf("wrong result: expected nil, got %v", actual)
+	}
+}
+
+func TestToIdentList_nil(t *testing.T) {
+	valGen := NewValueGenerator()
+	if actual := valGen.ToIdentList(nil); actual != nil {
+		t.Errorf("wrong result: expected nil, got %v", actual)
+	}
+}
