@@ -39,7 +39,7 @@ func TestNewValueGenerator(t *testing.T) {
 			func(t *testing.T) {
 				sig := NewSignature(
 					"sig",
-					[]string{"var.label1", "local.label2", "data.label3"},
+					nil,
 					BodyElements{
 						NewBodyAttribute("basic", *tc.value.ToString(&basicStringValue)),
 						NewBodyAttribute("custom", *tc.value.ToString(&customStringValue)),

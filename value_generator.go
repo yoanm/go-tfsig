@@ -36,7 +36,7 @@ func (g *ValueGenerator) ToIdent(s *string) *cty.Value {
 	return tokens.NewIdentValue(*s)
 }
 
-// ToIdentList converts a list of string a to cty.Value list containing capsules holding hclwrite.tokens
+// ToIdentList converts a list of string to cty.Value list containing capsules holding hclwrite.tokens
 func (g *ValueGenerator) ToIdentList(list *[]string) *cty.Value {
 	if list == nil {
 		return nil

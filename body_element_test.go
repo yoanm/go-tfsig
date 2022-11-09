@@ -10,7 +10,7 @@ import (
 	"github.com/yoanm/go-tfsig/testutils"
 )
 
-func TestBodyBlockBuild_panic(t *testing.T) {
+func TestBuild_panic(t *testing.T) {
 	cases := map[string]struct {
 		value BodyElement
 	}{
@@ -18,14 +18,14 @@ func TestBodyBlockBuild_panic(t *testing.T) {
 		"BodyEmptyLine":  {NewBodyEmptyLine()},
 	}
 
-	expectedError := "Element is not a block"
+	expectedError := "element is not a body block"
 	for tcname, tc := range cases {
 		t.Run(
 			tcname,
 			func(t *testing.T) {
 				testutils.ExpectPanic(
 					t,
-					"Basic",
+					tcname,
 					func() {
 						tc.value.Build()
 					},

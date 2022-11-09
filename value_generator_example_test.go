@@ -12,6 +12,8 @@ func ExampleValueGenerator() {
 	varVal := "var.my_var"
 	dataVal := "data.my_data.my_property"
 	customStringValue := "custom.my_var"
+	identStringValue := "explicit_ident.foo"
+	identListStringValue := []string{"explicit_ident_item.foo", "explicit_ident_item.bar"}
 
 	valGen := NewValueGenerator()
 	sig := NewEmptySignature("my_block")
@@ -20,9 +22,12 @@ func ExampleValueGenerator() {
 	sig.AppendAttribute("attr3", *valGen.ToString(&varVal))
 	sig.AppendAttribute("attr4", *valGen.ToString(&dataVal))
 	sig.AppendAttribute("attr5", *valGen.ToString(&customStringValue))
+	sig.AppendEmptyLine()
+	sig.AppendAttribute("attr6", *valGen.ToIdent(&identStringValue))
+	sig.AppendAttribute("attr7", *valGen.ToIdentList(&identListStringValue))
 	customValGen := NewValueGenerator("custom.")
 	sig.AppendEmptyLine()
-	sig.AppendAttribute("attr6", *customValGen.ToString(&customStringValue))
+	sig.AppendAttribute("attr8", *customValGen.ToString(&customStringValue))
 
 	hclFile := hclwrite.NewEmptyFile()
 	hclFile.Body().AppendBlock(sig.Build())
@@ -36,6 +41,9 @@ func ExampleValueGenerator() {
 	//   attr4 = data.my_data.my_property
 	//   attr5 = "custom.my_var"
 	//
-	//   attr6 = custom.my_var
+	//   attr6 = explicit_ident.foo
+	//   attr7 = [explicit_ident_item.foo, explicit_ident_item.bar]
+	//
+	//   attr8 = custom.my_var
 	// }
 }
