@@ -34,8 +34,8 @@ configure-test-env:
 build-doc: ## 🗜️  Build packages documentations
 build-doc:
 	goreadme -constants -variabless -types -methods -functions -factories > DOC.md
-	cd testutils && goreadme -constants -variabless -types -methods -functions -factories > README.md
-	cd tokens && goreadme -constants -variabless -types -methods -functions -factories > README.md
+	cd testutils && goreadme -constants -variabless -types -methods -functions -factories | sed -E 's/]\((\/.+)\.go/](\/testutils\1.go/g' > README.md
+	cd tokens && goreadme -constants -variabless -types -methods -functions -factories | sed -E 's/]\((\/.+)\.go/](\/tokens\1.go/g' > README.md
 
 ##—— 🐹 Golang —————————————————————————————————————————————————
 .PHONY: build
