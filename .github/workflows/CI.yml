@@ -82,10 +82,12 @@ jobs:
           exit 0
 
       - name: Documentation
+        env:
+          CI: false # If true, command thinks it's goreadme GHAction context (see https://github.com/posener/goreadme/issues/120)
         run: |
           make build-doc
           if [ ! "$(git status -s | wc -l)" -eq 0 ]; then
-              echo "::error::Documentation is not up to date ! Run 'make build-doc'"
+              echo "::error::Documentation is not up to date ! Run 'make build-doc' "
               exit 1;
           fi
           echo "Documentation is up to date 👌"

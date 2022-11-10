@@ -33,9 +33,9 @@ configure-test-env:
 .PHONY: build-doc
 build-doc: ## 🗜️  Build packages documentations
 build-doc:
-	goreadme -constants -types -methods -functions -factories > DOC.md
-	cd testutils && goreadme -constants -types -methods -functions -factories > README.md
-	cd tokens && goreadme -constants -types -methods -functions -factories > README.md
+	goreadme -constants -variabless -types -methods -functions -factories > DOC.md
+	cd testutils && goreadme -constants -variabless -types -methods -functions -factories > README.md
+	cd tokens && goreadme -constants -variabless -types -methods -functions -factories > README.md
 
 ##—— 🐹 Golang —————————————————————————————————————————————————
 .PHONY: build
