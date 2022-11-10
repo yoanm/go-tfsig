@@ -1,5 +1,6 @@
 /*
-Package tfsig is a wrapper for Terraform HCL language (hclwrite).
+Package tfsig is a wrapper for Terraform HCL language (`hclwrite`).
+
 It provides ability to generate block signature which are way easier to manipulate and alter than hclwrite.tokens type
 */
 package tfsig
@@ -80,7 +81,7 @@ func (s *BlockSignature) AppendEmptyLine() {
 	s.AppendElement(NewBodyEmptyLine())
 }
 
-// Build creates a hclwrite.Block and appends block's elements to it
+// Build creates a `hclwrite.Block` and appends block's elements to it
 func (s *BlockSignature) Build() *hclwrite.Block {
 	block := hclwrite.NewBlock(s.GetType(), s.GetLabels())
 
@@ -89,7 +90,7 @@ func (s *BlockSignature) Build() *hclwrite.Block {
 	return block
 }
 
-// BuildTokens builds the block signature as hclwrite.Tokens
+// BuildTokens builds the block signature as `hclwrite.Tokens`
 func (s *BlockSignature) BuildTokens() (tks hclwrite.Tokens) {
 	if block := s.Build(); block != nil {
 		blockTks := block.BuildTokens(nil)
@@ -102,9 +103,9 @@ func (s *BlockSignature) BuildTokens() (tks hclwrite.Tokens) {
 
 /** Private **/
 
-// writeElementsToBody writes all block signature elements to the provided hclwrite.Body
+// writeElementsToBody writes all block signature elements to the provided `hclwrite.Body`
 //
-// It takes care of attribute values containing hclwrite.Tokens encapsulated into a cty capsule
+// It takes care of attribute values containing `hclwrite.Tokens` encapsulated into a cty capsule
 func (s *BlockSignature) writeElementsToBody(body *hclwrite.Body) {
 	for _, value := range s.GetElements() {
 		if value.IsBodyBlock() {

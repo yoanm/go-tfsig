@@ -81,4 +81,14 @@ jobs:
           echo "All source files correctly formatted 👌"
           exit 0
 
+      - name: Documentation
+        run: |
+          make build-doc
+          if [ ! "$(git status -s | wc -l)" -eq 0 ]; then
+              echo "::error::Documentation is not up to date ! Run 'make build-doc'"
+              exit 1;
+          fi
+          echo "Documentation is up to date 👌"
+          exit 0
+
 

@@ -52,7 +52,8 @@ func (e BodyElement) IsBodyEmptyLine() bool {
 }
 
 // GetBodyAttribute returns the value of the attribute behind the BodyElement
-// It panics if BodyElement is not an attribute (use IsBodyAttribute() first)
+//
+// It panics if BodyElement is not an attribute (use `IsBodyAttribute()` first)
 func (e BodyElement) GetBodyAttribute() *cty.Value {
 	if !e.IsBodyAttribute() {
 		panic("element is not a body attribute")
@@ -61,7 +62,8 @@ func (e BodyElement) GetBodyAttribute() *cty.Value {
 }
 
 // GetBodyBlock returns the block behind the BodyElement
-// it panics if BodyElement is not a block (use IsBodyBlock() first)
+//
+// it panics if BodyElement is not a block (use `IsBodyBlock()` first)
 func (e BodyElement) GetBodyBlock() *BlockSignature {
 	if !e.IsBodyBlock() {
 		panic("element is not a body block")
@@ -69,8 +71,9 @@ func (e BodyElement) GetBodyBlock() *BlockSignature {
 	return e.block
 }
 
-// Build convert the current BodyElement into a hclwrite.Block
-// it panics if BodyElement is not a block (use IsBodyBlock() first)
+// Build convert the current BodyElement into a `hclwrite.Block`
+//
+// it panics if BodyElement is not a block (use `IsBodyBlock()` first)
 func (e BodyElement) Build() *hclwrite.Block {
 	if !e.IsBodyBlock() {
 		panic("element is not a body block")
