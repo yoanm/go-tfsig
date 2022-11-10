@@ -7,7 +7,7 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
-func Example_dependsOn() {
+func ExampleBlockSignature_DependsOn() {
 	// resource with 'depends_on' directive
 	sig := NewEmptyResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
@@ -25,7 +25,7 @@ func Example_dependsOn() {
 	// }
 }
 
-func Example_lifecycle() {
+func ExampleBlockSignature_Lifecycle() {
 	// resource with 'lifecycle' directive
 	sig := NewEmptyResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))

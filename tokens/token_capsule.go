@@ -4,12 +4,12 @@ import (
 	"github.com/zclconf/go-cty/cty"
 )
 
-// IsCapsuleType returns true if provided cty.Type is a special capsule encapsulating hclwrite.Tokens
+// IsCapsuleType returns true if provided `cty.Type` is a special capsule encapsulating `hclwrite.Tokens`
 func IsCapsuleType(t cty.Type) bool {
 	return t.IsCapsuleType() && t.FriendlyName() == HclwriteTokensCtyTypeName
 }
 
-// ContainsCapsule will deep check if provided value contains a special capsule encapsulating hclwrite.Tokens
+// ContainsCapsule will deep check if provided value contains a special capsule encapsulating `hclwrite.Tokens`
 // (and therefore requires special process to de-encapsulate it)
 func ContainsCapsule(valPtr *cty.Value) bool {
 	if valPtr == nil {

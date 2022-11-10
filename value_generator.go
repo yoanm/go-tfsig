@@ -10,8 +10,8 @@ import (
 )
 
 // ValueGenerator is able to detect "ident" tokens and convert them into a special cty capsule.
-// Capsule will then be converted to hclwrite.tokens
-// It allows to write values like 'var.my_var', 'locals.my_local' or 'data.res_name.val_name' without any quotes
+// Capsule will then be converted to `hclwrite.tokens`
+// It allows to write values like `var.my_var`, `locals.my_local` or `data.res_name.val_name` without any quotes
 type ValueGenerator struct {
 	matcher IdentTokenMatcherInterface
 }
@@ -27,7 +27,7 @@ func NewValueGeneratorWith(matcher IdentTokenMatcherInterface) ValueGenerator {
 	return ValueGenerator{matcher: matcher}
 }
 
-// ToIdent converts a string to a special cty.Value capsule holding hclwrite.tokens
+// ToIdent converts a string to a special `cty.Value` capsule holding `hclwrite.tokens`
 func (g *ValueGenerator) ToIdent(s *string) *cty.Value {
 	if s == nil {
 		return nil
@@ -36,7 +36,7 @@ func (g *ValueGenerator) ToIdent(s *string) *cty.Value {
 	return tokens.NewIdentValue(*s)
 }
 
-// ToIdentList converts a list of string to cty.Value list containing capsules holding hclwrite.tokens
+// ToIdentList converts a list of string to `cty.Value` list containing capsules holding `hclwrite.tokens`
 func (g *ValueGenerator) ToIdentList(list *[]string) *cty.Value {
 	if list == nil {
 		return nil
@@ -45,26 +45,26 @@ func (g *ValueGenerator) ToIdentList(list *[]string) *cty.Value {
 	return tokens.NewIdentListValue(*list)
 }
 
-// ToString convert a string to cty.Value string which will be rendered as quoted string by terraform HCL
-// If the provided string is actually an 'ident' token, cty.Value will be a capsule holding hclwrite.tokens
+// ToString convert a string to `cty.Value` string which will be rendered as quoted string by terraform HCL
+// If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`
 func (g *ValueGenerator) ToString(s *string) *cty.Value {
 	return g.FromString(s, cty.String)
 }
 
-// ToBool convert a string to cty.Value boolean which will be rendered as true or false value by terraform HCL
-// If the provided string is actually an 'ident' token, cty.Value will be a capsule holding hclwrite.tokens
+// ToBool convert a string to `cty.Value` boolean which will be rendered as true or false value by terraform HCL
+// If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`
 func (g *ValueGenerator) ToBool(s *string) *cty.Value {
 	return g.FromString(s, cty.Bool)
 }
 
-// ToNumber convert a string to cty.Value number which will be rendered as numeric value by terraform HCL
-// If the provided string is actually an 'ident' token, cty.Value will be a capsule holding hclwrite.tokens
+// ToNumber convert a string to `cty.Value` number which will be rendered as numeric value by terraform HCL
+// If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`
 func (g *ValueGenerator) ToNumber(s *string) *cty.Value {
 	return g.FromString(s, cty.Number)
 }
 
-// ToStringList convert a string list to cty.Value string list which will be rendered as quoted string list by terraform HCL
-// If a provided string item is actually an 'ident' token, cty.Value item will be a capsule holding hclwrite.tokens
+// ToStringList convert a string list to `cty.Value` string list which will be rendered as quoted string list by terraform HCL
+// If a provided string item is actually an 'ident' token, `cty.Value` item will be a capsule holding `hclwrite.tokens`
 func (g *ValueGenerator) ToStringList(list *[]string) *cty.Value {
 	if list == nil {
 		return nil
@@ -83,8 +83,8 @@ func (g *ValueGenerator) ToStringList(list *[]string) *cty.Value {
 	return &val
 }
 
-// FromString convert a string to cty.Value of the provided type
-// If the provided string is actually an 'ident' token, cty.Value will be a capsule holding hclwrite.tokens
+// FromString convert a string to `cty.Value` of the provided type
+// If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`
 func (g *ValueGenerator) FromString(s *string, t cty.Type) *cty.Value {
 	if s == nil {
 		return nil

@@ -1,6 +1,7 @@
 /*
 Package tokens provides an easy way to create common hclwrite tokens (such as new line, comma, equal sign, ident)
-It also provides an easy way to encapsulate hclwrite tokens into a cty.Value and a function (Generate()) to manage those type of value
+
+It also provides an easy way to encapsulate hclwrite tokens into a cty.Value and a function (`Generate()`) to manage those type of value
 */
 package tokens
 
@@ -14,7 +15,7 @@ import (
 )
 
 const (
-	// HclwriteTokensCtyTypeName is the friendly cty name for the capsule encapsulating hclwrite.Tokens
+	// HclwriteTokensCtyTypeName is the friendly cty name for the capsule encapsulating `hclwrite.Tokens`
 	HclwriteTokensCtyTypeName = "cty.CapsuleVal(hclwrite.Tokens)"
 )
 
@@ -24,7 +25,7 @@ func init() {
 	hclwriteTokensCtyType = cty.Capsule(HclwriteTokensCtyTypeName, reflect.TypeOf(hclwrite.Tokens{}))
 }
 
-// NewIdentValue takes a string which should be considered as 'ident' token and converts it to a special cty.Value capsule
+// NewIdentValue takes a string which should be considered as 'ident' token and converts it to a special `cty.Value` capsule
 func NewIdentValue(s string) *cty.Value {
 	val := ToValue(NewIdentTokens(s))
 
@@ -32,7 +33,7 @@ func NewIdentValue(s string) *cty.Value {
 }
 
 // NewIdentListValue tales a list of string which should be all considered as 'ident' tokens
-// and converts them into a cty list containing special cty.Value capsule
+// and converts them into a cty list containing special `cty.Value` capsule
 func NewIdentListValue(list []string) *cty.Value {
 	if list == nil {
 		return nil
@@ -52,13 +53,14 @@ func NewIdentListValue(list []string) *cty.Value {
 	return &val
 }
 
-// ToValue takes hclwrite.Tokens value and converts it to special cty.Value capsule
+// ToValue takes `hclwrite.Tokens` value and converts it to special `cty.Value` capsule
 func ToValue(tokens hclwrite.Tokens) cty.Value {
 	return cty.CapsuleVal(hclwriteTokensCtyType, &tokens)
 }
 
-// FromValue takes a cty.Value and extract the hclwrite.Tokens from it.
-// It panics if the provided valud is not a special cty.Value capsule
+// FromValue takes a `cty.Value` and extract the `hclwrite.Tokens` from it.
+//
+// It panics if the provided valud is not a special `cty.Value` capsule
 func FromValue(v cty.Value) (newTokens hclwrite.Tokens) {
 	if err := gocty.FromCtyValue(v, &newTokens); err != nil {
 		panic(fmt.Sprintf("error during conversion from cty.Value to hclwrite.Tokens: %s", err))

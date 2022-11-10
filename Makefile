@@ -18,12 +18,24 @@ help: ## ❓ Dislay this help
 		| sed -e 's/\[32m##/[33m/'
 
 ##—— ️⚙️  Environments ——————————————————————————————————————————————————————
+.PHONY: configure-dev-env
+configure-dev-env: ## 🤖 Install required libraries for dev environment
+configure-dev-env:
+	go install github.com/posener/goreadme/cmd/goreadme@latest
 .PHONY: configure-test-env
 configure-test-env: ## 🤖 Install required libraries for test environment (golint, staticcheck, etc)
+configure-test-env: configure-dev-env
 configure-test-env:
 	go install golang.org/x/lint/golint@latest
 	go install honnef.co/go/tools/cmd/staticcheck@latest
 
+##—— 📝 Documentation —————————————————————————————————————————————————
+.PHONY: build-doc
+build-doc: ## 🗜️  Build packages documentations
+build-doc:
+	goreadme -constants -variabless -types -methods -functions -factories > DOC.md
+	cd testutils && goreadme -constants -variabless -types -methods -functions -factories > README.md
+	cd tokens && goreadme -constants -variabless -types -methods -functions -factories > README.md
 
 ##—— 🐹 Golang —————————————————————————————————————————————————
 .PHONY: build

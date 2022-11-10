@@ -14,8 +14,8 @@ func (s *BlockSignature) DependsOn(idList []string) {
 	s.AppendAttribute("depends_on", *tokens.NewIdentListValue(idList))
 }
 
-// LifecycleConfig is used as argument for Lifecycle() method
-// It's basically a wrapper for terraform 'lifecycle' directive
+// LifecycleConfig is used as argument for `Lifecycle()` method
+// It's basically a wrapper for terraform `lifecycle` directive
 type LifecycleConfig struct {
 	CreateBeforeDestroy *bool
 	PreventDestroy      *bool
@@ -28,12 +28,16 @@ type LifecycleConfig struct {
 // SetCreateBeforeDestroy is a simple helper to avoid having to create a boolean variable and then pass the pointer to it
 //
 // E.g: instead of writing
+// ```
 // createBeforeDestroy = true
 // config := LifecycleConfig{CreateBeforeDestroy: &createBeforeDestroy}
+// ```
 //
 // Simply write:
+// ```
 // config := LifecycleConfig{}
 // config.SetCreateBeforeDestroy(true)
+// ```
 func (c *LifecycleConfig) SetCreateBeforeDestroy(b bool) {
 	c.CreateBeforeDestroy = &b
 }
@@ -41,12 +45,16 @@ func (c *LifecycleConfig) SetCreateBeforeDestroy(b bool) {
 // SetPreventDestroy is a simple helper to avoid having to create a boolean variable and then pass the pointer to it
 //
 // E.g: instead of writing
+// ```
 // preventDestroy = false
 // config := LifecycleConfig{PreventDestroy: &preventDestroy}
+// ```
 //
 // Simply write:
+// ```
 // config := LifecycleConfig{}
 // config.SetPreventDestroy(true)
+// ```
 func (c *LifecycleConfig) SetPreventDestroy(b bool) {
 	c.PreventDestroy = &b
 }
