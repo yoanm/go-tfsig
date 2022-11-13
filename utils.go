@@ -22,7 +22,7 @@ func init() {
 
 // AppendBlockIfNotNil appends the provided block to the provided body only if block is not nil
 //
-// It simply avoids an `if` in your code
+// It simply avoids an `if` in your code.
 func AppendBlockIfNotNil(body *hclwrite.Body, block *hclwrite.Block) {
 	if block != nil {
 		body.AppendBlock(block)
@@ -31,7 +31,7 @@ func AppendBlockIfNotNil(body *hclwrite.Body, block *hclwrite.Block) {
 
 // AppendNewLineAndBlockIfNotNil appends an empty line followed by provided block to the provided body only if block is not nil
 //
-// It simply avoids an `if` in your code
+// It simply avoids an `if` in your code.
 func AppendNewLineAndBlockIfNotNil(body *hclwrite.Body, block *hclwrite.Block) {
 	if block != nil {
 		body.AppendNewline()
@@ -41,7 +41,7 @@ func AppendNewLineAndBlockIfNotNil(body *hclwrite.Body, block *hclwrite.Block) {
 
 // ToTerraformIdentifier converts a string to a terraform identifier, by converting not allowed characters to `-`
 //
-// And if provided value starts with a character not allowed as first character, it replaces it by `_`
+// And if provided value starts with a character not allowed as first character, it replaces it by `_`.
 func ToTerraformIdentifier(s string) string {
 	id := invalidCharMatcher.ReplaceAllString(s, "-")
 

@@ -15,22 +15,22 @@ const (
 
 ## Functions
 
-### func [ContainsCapsule](/tokens/token_capsule.go#L14)
+### func [ContainsCapsule](./token_capsule.go#L14)
 
 `func ContainsCapsule(valPtr *cty.Value) bool`
 
 ContainsCapsule will deep check if provided value contains a special capsule encapsulating `hclwrite.Tokens`
 (and therefore requires special process to de-encapsulate it)
 
-### func [FromValue](/tokens/main.go#L64)
+### func [FromValue](./main.go#L64)
 
 `func FromValue(v cty.Value) (newTokens hclwrite.Tokens)`
 
 FromValue takes a `cty.Value` and extract the `hclwrite.Tokens` from it.
 
-It panics if the provided valud is not a special `cty.Value` capsule
+It panics if the provided value is not a special `cty.Value` capsule
 
-### func [Generate](/tokens/generator.go#L14)
+### func [Generate](./generator.go#L14)
 
 `func Generate(valuePtr *cty.Value) hclwrite.Tokens`
 
@@ -133,7 +133,7 @@ Map of capsule: "{\n\"A\"=A_value\n\"B\"=B_value\n}"
 Tuple with capsule: "[\"A_value\",B_value,2]"
 ```
 
-### func [GenerateFromIterable](/tokens/generator.go#L62)
+### func [GenerateFromIterable](./generator.go#L62)
 
 `func GenerateFromIterable(elements []hclwrite.Tokens, t cty.Type) hclwrite.Tokens`
 
@@ -141,13 +141,13 @@ GenerateFromIterable takes a list of `hclwrite.Tokens` and create related `hclwr
 
 It panics if provided type is not an iterable type
 
-### func [IsCapsuleType](/tokens/token_capsule.go#L8)
+### func [IsCapsuleType](./token_capsule.go#L8)
 
 `func IsCapsuleType(t cty.Type) bool`
 
 IsCapsuleType returns true if provided `cty.Type` is a special capsule encapsulating `hclwrite.Tokens`
 
-### func [MergeIterableAndGenerate](/tokens/generator.go#L85)
+### func [MergeIterableAndGenerate](./generator.go#L85)
 
 `func MergeIterableAndGenerate(collection cty.Value, newElements []hclwrite.Tokens) hclwrite.Tokens`
 
@@ -155,13 +155,13 @@ MergeIterableAndGenerate takes a `cty.Value` collection, append new elements and
 
 It panics if provided collection is not iterable
 
-### func [NewCommaToken](/tokens/token.go#L14)
+### func [NewCommaToken](./token.go#L14)
 
 `func NewCommaToken() *hclwrite.Token`
 
 NewCommaToken returns a `hclwrite.Token` with `hclsyntax.TokenComma` type
 
-### func [NewCommaTokens](/tokens/tokens.go#L17)
+### func [NewCommaTokens](./tokens.go#L17)
 
 `func NewCommaTokens() hclwrite.Tokens`
 
@@ -169,13 +169,13 @@ NewCommaTokens creates a `hclwrite.Tokens` containing a `hclwrite.Token` with `h
 
 See also `NewCommaToken()`
 
-### func [NewEqualToken](/tokens/token.go#L19)
+### func [NewEqualToken](./token.go#L19)
 
 `func NewEqualToken() *hclwrite.Token`
 
 NewEqualToken returns a `hclwrite.Token` with `hclsyntax.TokenEqual` type
 
-### func [NewEqualTokens](/tokens/tokens.go#L24)
+### func [NewEqualTokens](./tokens.go#L24)
 
 `func NewEqualTokens() hclwrite.Tokens`
 
@@ -183,7 +183,7 @@ NewEqualTokens creates a `hclwrite.Tokens` containing a `hclwrite.Token` with `h
 
 See also `NewEqualToken()`
 
-### func [NewIdentListValue](/tokens/main.go#L37)
+### func [NewIdentListValue](./main.go#L37)
 
 `func NewIdentListValue(list []string) *cty.Value`
 
@@ -207,13 +207,13 @@ fmt.Println(string(hclFile.Bytes()))
 attr = [explicit_ident_item.foo, explicit_ident_item.bar]
 ```
 
-### func [NewIdentToken](/tokens/token.go#L9)
+### func [NewIdentToken](./token.go#L9)
 
 `func NewIdentToken(b []byte) *hclwrite.Token`
 
 NewIdentToken returns a `hclwrite.Token` with `hclsyntax.TokenIdent` type encapsulating provided bytes
 
-### func [NewIdentTokens](/tokens/tokens.go#L10)
+### func [NewIdentTokens](./tokens.go#L10)
 
 `func NewIdentTokens(s string) hclwrite.Tokens`
 
@@ -221,7 +221,7 @@ NewIdentTokens takes a string and convert it to `hclwrite.Tokens` containing a `
 
 See also `NewIdentToken()`
 
-### func [NewIdentValue](/tokens/main.go#L29)
+### func [NewIdentValue](./main.go#L29)
 
 `func NewIdentValue(s string) *cty.Value`
 
@@ -244,13 +244,13 @@ fmt.Println(string(hclFile.Bytes()))
 attr = explicit_ident.foo
 ```
 
-### func [NewLineToken](/tokens/token.go#L24)
+### func [NewLineToken](./token.go#L24)
 
 `func NewLineToken() *hclwrite.Token`
 
 NewLineToken returns a `hclwrite.Token` with `hclsyntax.TokenNewline` type
 
-### func [NewLineTokens](/tokens/tokens.go#L31)
+### func [NewLineTokens](./tokens.go#L31)
 
 `func NewLineTokens() hclwrite.Tokens`
 
@@ -258,7 +258,7 @@ NewLineTokens creates a `hclwrite.Tokens` containing a `hclwrite.Token` with `hc
 
 See also `NewLineToken()`
 
-### func [SplitIterable](/tokens/generator.go#L126)
+### func [SplitIterable](./generator.go#L126)
 
 `func SplitIterable(collection cty.Value) (tokensStart hclwrite.Tokens, elements hclwrite.Tokens, tokensEnd hclwrite.Tokens)`
 
@@ -391,7 +391,7 @@ Tuple:
 	End: "]"
 ```
 
-### func [ToValue](/tokens/main.go#L57)
+### func [ToValue](./main.go#L57)
 
 `func ToValue(tokens hclwrite.Tokens) cty.Value`
 

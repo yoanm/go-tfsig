@@ -189,7 +189,7 @@ fmt.Println(string(hclFile.Bytes()))
 
  Output:
 
-```
+```terraform
 resource "res_name" "res_id" {
   attribute1 = "value1"
 
@@ -215,7 +215,7 @@ GetLabels returns labels attached to the block
 
 GetType returns the type of the block
 
-#### func (*BlockSignature) [Lifecycle](/block_signature_extra.go#L70)
+#### func (*BlockSignature) [Lifecycle](/block_signature_extra.go#L62)
 
 `func (s *BlockSignature) Lifecycle(config LifecycleConfig)`
 
@@ -250,7 +250,7 @@ fmt.Println(string(hclFile.Bytes()))
 
  Output:
 
-```
+```terraform
 resource "res_name" "res_id" {
   attribute1 = "value1"
 
@@ -356,31 +356,33 @@ IsBodyEmptyLine returns true if the BodyElement is an empty line
 
 BodyElements is a simple wrapper for a list of BodyElement
 
-### type [IdentTokenMatcher](/ident_token_matcher.go#L30)
+### type [IdentTokenMatcher](/ident_token_matcher.go#L32)
 
 `type IdentTokenMatcher struct { ... }`
 
 IdentTokenMatcher is a simple implementation for IdentTokenMatcherInterface
 
-#### func [NewIdentTokenMatcher](/ident_token_matcher.go#L20)
+#### func [NewIdentTokenMatcher](/ident_token_matcher.go#L22)
 
 `func NewIdentTokenMatcher(prefixList ...string) IdentTokenMatcher`
 
 NewIdentTokenMatcher returns an instance of IdentTokenMatcher with provided list of prefix to consider as 'ident' tokens
 
-#### func (IdentTokenMatcher) [IsIdentToken](/ident_token_matcher.go#L36)
+`local.`, `var.` and `data.` tokens will be considered as 'ident' tokens by default
+
+#### func (IdentTokenMatcher) [IsIdentToken](/ident_token_matcher.go#L38)
 
 `func (m IdentTokenMatcher) IsIdentToken(s string) bool`
 
 IsIdentToken is the implementation for IdentTokenMatcherInterface
 
-### type [IdentTokenMatcherInterface](/ident_token_matcher.go#L25)
+### type [IdentTokenMatcherInterface](/ident_token_matcher.go#L27)
 
 `type IdentTokenMatcherInterface interface { ... }`
 
 IdentTokenMatcherInterface is a simple interface declaring required method to detect an 'ident' token
 
-### type [LifecycleCondition](/block_signature_extra.go#L64)
+### type [LifecycleCondition](/block_signature_extra.go#L56)
 
 `type LifecycleCondition struct { ... }`
 
@@ -394,38 +396,42 @@ It's basically a wrapper for terraform lifecycle pre- and post-conditions
 LifecycleConfig is used as argument for `Lifecycle()` method
 It's basically a wrapper for terraform `lifecycle` directive
 
-#### func (*LifecycleConfig) [SetCreateBeforeDestroy](/block_signature_extra.go#L41)
+#### func (*LifecycleConfig) [SetCreateBeforeDestroy](/block_signature_extra.go#L37)
 
 `func (c *LifecycleConfig) SetCreateBeforeDestroy(b bool)`
 
 SetCreateBeforeDestroy is a simple helper to avoid having to create a boolean variable and then pass the pointer to it
 
 E.g: instead of writing
-```
+
+```go
 createBeforeDestroy = true
 config := LifecycleConfig{CreateBeforeDestroy: &createBeforeDestroy}
 ```
 
 Simply write:
-```
+
+```go
 config := LifecycleConfig{}
 config.SetCreateBeforeDestroy(true)
 ```
 
-#### func (*LifecycleConfig) [SetPreventDestroy](/block_signature_extra.go#L58)
+#### func (*LifecycleConfig) [SetPreventDestroy](/block_signature_extra.go#L50)
 
 `func (c *LifecycleConfig) SetPreventDestroy(b bool)`
 
 SetPreventDestroy is a simple helper to avoid having to create a boolean variable and then pass the pointer to it
 
 E.g: instead of writing
-```
+
+```go
 preventDestroy = false
 config := LifecycleConfig{PreventDestroy: &preventDestroy}
 ```
 
 Simply write:
-```
+
+```go
 config := LifecycleConfig{}
 config.SetPreventDestroy(true)
 ```
@@ -568,7 +574,7 @@ fmt.Println(string(hclFile.Bytes()))
 
  Output:
 
-```
+```terraform
 resource "res_name" "res_id" {
   attribute1 = "value1"
 
@@ -616,7 +622,7 @@ fmt.Println(string(hclFile.Bytes()))
 
  Output:
 
-```
+```terraform
 resource "res_name" "res_id" {
   attribute3 = -12.34
   attribute4 = 42

@@ -47,7 +47,6 @@ func TestAppendBlockIfNotNil(t *testing.T) {
 }
 
 func TestToTerraformIdentifier(t *testing.T) {
-
 	cases := map[string]struct {
 		Value string
 		Want  string

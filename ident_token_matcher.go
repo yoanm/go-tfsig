@@ -17,22 +17,24 @@ func init() {
 }
 
 // NewIdentTokenMatcher returns an instance of IdentTokenMatcher with provided list of prefix to consider as 'ident' tokens
+//
+// `local.`, `var.` and `data.` tokens will be considered as 'ident' tokens by default.
 func NewIdentTokenMatcher(prefixList ...string) IdentTokenMatcher {
 	return IdentTokenMatcher{prefixList: append(prefixList, defaultUnescapedStringPrefixList...)}
 }
 
-// IdentTokenMatcherInterface is a simple interface declaring required method to detect an 'ident' token
+// IdentTokenMatcherInterface is a simple interface declaring required method to detect an 'ident' token.
 type IdentTokenMatcherInterface interface {
 	IsIdentToken(s string) bool
 }
 
-// IdentTokenMatcher is a simple implementation for IdentTokenMatcherInterface
+// IdentTokenMatcher is a simple implementation for IdentTokenMatcherInterface.
 type IdentTokenMatcher struct {
 	prefixList []string
 	IdentTokenMatcherInterface
 }
 
-// IsIdentToken is the implementation for IdentTokenMatcherInterface
+// IsIdentToken is the implementation for IdentTokenMatcherInterface.
 func (m IdentTokenMatcher) IsIdentToken(s string) bool {
 	for _, prefix := range m.prefixList {
 		if strings.HasPrefix(s, prefix) {

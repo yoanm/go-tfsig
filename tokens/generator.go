@@ -10,7 +10,7 @@ import (
 
 // Generate converts a `cty.Value` to `hclwrite.Tokens`
 //
-// It takes care of special `cty.Value` capsule encapsulating `hclwrite.Tokens`
+// It takes care of special `cty.Value` capsule encapsulating `hclwrite.Tokens`.
 func Generate(valuePtr *cty.Value) hclwrite.Tokens {
 	var value cty.Value
 	if valuePtr != nil {
@@ -58,7 +58,7 @@ func Generate(valuePtr *cty.Value) hclwrite.Tokens {
 
 // GenerateFromIterable takes a list of `hclwrite.Tokens` and create related `hclwrite.Tokens` based on the provided `cty.Type`
 //
-// It panics if provided type is not an iterable type
+// It panics if provided type is not an iterable type.
 func GenerateFromIterable(elements []hclwrite.Tokens, t cty.Type) hclwrite.Tokens {
 	var emptyCollectionValue cty.Value
 	switch {
@@ -81,7 +81,7 @@ func GenerateFromIterable(elements []hclwrite.Tokens, t cty.Type) hclwrite.Token
 
 // MergeIterableAndGenerate takes a `cty.Value` collection, append new elements and convert the result to related `hclwrite.Tokens`
 //
-// It panics if provided collection is not iterable
+// It panics if provided collection is not iterable.
 func MergeIterableAndGenerate(collection cty.Value, newElements []hclwrite.Tokens) hclwrite.Tokens {
 	tokensStart, existingElements, tokensEnd := SplitIterable(collection)
 
@@ -122,7 +122,7 @@ func MergeIterableAndGenerate(collection cty.Value, newElements []hclwrite.Token
 //
 // It can be used to later append new elements to the collection (see `MergeIterableAndGenerate()`)
 //
-// It panics if provided collection is not iterable
+// It panics if provided collection is not iterable.
 func SplitIterable(collection cty.Value) (tokensStart hclwrite.Tokens, elements hclwrite.Tokens, tokensEnd hclwrite.Tokens) {
 	if !collection.CanIterateElements() {
 		panic(fmt.Sprintf("expected an iterable type but got %s", collection.Type().GoString()))

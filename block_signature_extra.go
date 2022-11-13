@@ -8,14 +8,14 @@ import (
 
 /** Public **/
 
-// DependsOn adds an empty line and the 'depends_on' terraform directive with provided id list
+// DependsOn adds an empty line and the 'depends_on' terraform directive with provided id list.
 func (s *BlockSignature) DependsOn(idList []string) {
 	s.AppendEmptyLine()
 	s.AppendAttribute("depends_on", *tokens.NewIdentListValue(idList))
 }
 
 // LifecycleConfig is used as argument for `Lifecycle()` method
-// It's basically a wrapper for terraform `lifecycle` directive
+// It's basically a wrapper for terraform `lifecycle` directive.
 type LifecycleConfig struct {
 	CreateBeforeDestroy *bool
 	PreventDestroy      *bool
@@ -28,16 +28,14 @@ type LifecycleConfig struct {
 // SetCreateBeforeDestroy is a simple helper to avoid having to create a boolean variable and then pass the pointer to it
 //
 // E.g: instead of writing
-// ```
-// createBeforeDestroy = true
-// config := LifecycleConfig{CreateBeforeDestroy: &createBeforeDestroy}
-// ```
+//
+//	createBeforeDestroy = true
+//	config := LifecycleConfig{CreateBeforeDestroy: &createBeforeDestroy}
 //
 // Simply write:
-// ```
-// config := LifecycleConfig{}
-// config.SetCreateBeforeDestroy(true)
-// ```
+//
+//	config := LifecycleConfig{}
+//	config.SetCreateBeforeDestroy(true)
 func (c *LifecycleConfig) SetCreateBeforeDestroy(b bool) {
 	c.CreateBeforeDestroy = &b
 }
@@ -45,28 +43,26 @@ func (c *LifecycleConfig) SetCreateBeforeDestroy(b bool) {
 // SetPreventDestroy is a simple helper to avoid having to create a boolean variable and then pass the pointer to it
 //
 // E.g: instead of writing
-// ```
-// preventDestroy = false
-// config := LifecycleConfig{PreventDestroy: &preventDestroy}
-// ```
+//
+//	preventDestroy = false
+//	config := LifecycleConfig{PreventDestroy: &preventDestroy}
 //
 // Simply write:
-// ```
-// config := LifecycleConfig{}
-// config.SetPreventDestroy(true)
-// ```
+//
+//	config := LifecycleConfig{}
+//	config.SetPreventDestroy(true)
 func (c *LifecycleConfig) SetPreventDestroy(b bool) {
 	c.PreventDestroy = &b
 }
 
 // LifecycleCondition is used for Precondition and Postcondition property of LifecycleConfig
-// It's basically a wrapper for terraform lifecycle pre- and post-conditions
+// It's basically a wrapper for terraform lifecycle pre- and post-conditions.
 type LifecycleCondition struct {
 	condition    string
 	errorMessage string
 }
 
-// Lifecycle adds an empty line and the 'lifecycle' terraform directive and then append provided lifecycle attributes
+// Lifecycle adds an empty line and the 'lifecycle' terraform directive and then append provided lifecycle attributes.
 func (s *BlockSignature) Lifecycle(config LifecycleConfig) {
 	sig := NewEmptySignature("lifecycle")
 

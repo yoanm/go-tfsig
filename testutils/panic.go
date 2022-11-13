@@ -4,7 +4,7 @@ import "testing"
 
 // ExpectPanic executes provided 'fn' function and check that:
 // - `panic(...)` has been called
-// - related error is the expected one
+// - related error is the expected one.
 func ExpectPanic(t *testing.T, tcname string, fn func(), expectedError string) {
 	defer func() {
 		err := recover()
