@@ -12,7 +12,7 @@ It provides ability to generate block signature which are way easier to manipula
 
 AppendBlockIfNotNil appends the provided block to the provided body only if block is not nil
 
-It simply avoids an `if` in your code
+It simply avoids an `if` in your code.
 
 ```golang
 hclFile := hclwrite.NewEmptyFile()
@@ -48,7 +48,7 @@ block3 {
 
 AppendNewLineAndBlockIfNotNil appends an empty line followed by provided block to the provided body only if block is not nil
 
-It simply avoids an `if` in your code
+It simply avoids an `if` in your code.
 
 ```golang
 hclFile := hclwrite.NewEmptyFile()
@@ -88,7 +88,7 @@ block4 {
 
 ToTerraformIdentifier converts a string to a terraform identifier, by converting not allowed characters to `-`
 
-And if provided value starts with a character not allowed as first character, it replaces it by `_`
+And if provided value starts with a character not allowed as first character, it replaces it by `_`.
 
 ```golang
 fmt.Printf("a_valid-identifier becomes %s\n", ToTerraformIdentifier("a_valid-identifier"))
@@ -113,67 +113,84 @@ an.identifier becomes an-identifier
 `type BlockSignature struct { ... }`
 
 BlockSignature is basically a wrapper to HCL blocks
-It holds a type, the block labels and its elements
+It holds a type, the block labels and its elements.
 
 #### func [NewEmptyResource](/block_signature.go#L32)
 
 `func NewEmptyResource(name, id string, labels ...string) *BlockSignature`
 
-NewEmptyResource returns a BlockSignature pointer with "resource" type and filled with provided labels
+NewEmptyResource returns a BlockSignature pointer with "resource" type and filled with provided labels.
 
 #### func [NewEmptySignature](/block_signature.go#L27)
 
 `func NewEmptySignature(name string, labels ...string) *BlockSignature`
 
-NewEmptySignature returns a BlockSignature pointer filled with provided labels
+NewEmptySignature returns a BlockSignature pointer filled with provided labels.
 
 #### func [NewSignature](/block_signature.go#L18)
 
 `func NewSignature(name string, labels []string, elements BodyElements) *BlockSignature`
 
-NewSignature returns a BlockSignature pointer filled with provided labels and elements
+NewSignature returns a BlockSignature pointer filled with provided labels and elements.
+
+#### func (*BlockSignature) [AppendAttrIfNotNil](/block_signature_extra.go#L14)
+
+`func (s *BlockSignature) AppendAttrIfNotNil(attrName string, v *cty.Value)`
+
+AppendAttrIfNotNil appends the provided attribute only if not nil
+
+It simply avoids an `if` in your code.
 
 #### func (*BlockSignature) [AppendAttribute](/block_signature.go#L70)
 
 `func (s *BlockSignature) AppendAttribute(name string, value cty.Value)`
 
-AppendAttribute appends an attribute to the block
+AppendAttribute appends an attribute to the block.
 
 #### func (*BlockSignature) [AppendChild](/block_signature.go#L75)
 
 `func (s *BlockSignature) AppendChild(child *BlockSignature)`
 
-AppendChild appends a child block to the block
+AppendChild appends a child block to the block.
+
+#### func (*BlockSignature) [AppendChildIfNotNil](/block_signature_extra.go#L24)
+
+`func (s *BlockSignature) AppendChildIfNotNil(child *BlockSignature)`
+
+AppendChildIfNotNil appends the provided child only if not nil. And in case there is existing elements,
+it prepends an empty line
+
+It simply avoids an `if` in your code.
 
 #### func (*BlockSignature) [AppendElement](/block_signature.go#L65)
 
 `func (s *BlockSignature) AppendElement(element BodyElement)`
 
-AppendElement appends an element to the block
+AppendElement appends an element to the block.
 
 #### func (*BlockSignature) [AppendEmptyLine](/block_signature.go#L80)
 
 `func (s *BlockSignature) AppendEmptyLine()`
 
-AppendEmptyLine appends an empty line to the block
+AppendEmptyLine appends an empty line to the block.
 
 #### func (*BlockSignature) [Build](/block_signature.go#L85)
 
 `func (s *BlockSignature) Build() *hclwrite.Block`
 
-Build creates a `hclwrite.Block` and appends block's elements to it
+Build creates a `hclwrite.Block` and appends block's elements to it.
 
 #### func (*BlockSignature) [BuildTokens](/block_signature.go#L94)
 
 `func (s *BlockSignature) BuildTokens() (tks hclwrite.Tokens)`
 
-BuildTokens builds the block signature as `hclwrite.Tokens`
+BuildTokens builds the block signature as `hclwrite.Tokens`.
 
-#### func (*BlockSignature) [DependsOn](/block_signature_extra.go#L12)
+#### func (*BlockSignature) [DependsOn](/block_signature_extra.go#L35)
 
 `func (s *BlockSignature) DependsOn(idList []string)`
 
-DependsOn adds an empty line and the 'depends_on' terraform directive with provided id list
+DependsOn adds an empty line and the 'depends_on' terraform directive with provided id list.
 
 ```golang
 // resource with 'depends_on' directive
@@ -201,25 +218,25 @@ resource "res_name" "res_id" {
 
 `func (s *BlockSignature) GetElements() BodyElements`
 
-GetElements returns all elements attached to the block
+GetElements returns all elements attached to the block.
 
 #### func (*BlockSignature) [GetLabels](/block_signature.go#L50)
 
 `func (s *BlockSignature) GetLabels() []string`
 
-GetLabels returns labels attached to the block
+GetLabels returns labels attached to the block.
 
 #### func (*BlockSignature) [GetType](/block_signature.go#L45)
 
 `func (s *BlockSignature) GetType() string`
 
-GetType returns the type of the block
+GetType returns the type of the block.
 
-#### func (*BlockSignature) [Lifecycle](/block_signature_extra.go#L62)
+#### func (*BlockSignature) [Lifecycle](/block_signature_extra.go#L89)
 
 `func (s *BlockSignature) Lifecycle(config LifecycleConfig)`
 
-Lifecycle adds an empty line and the 'lifecycle' terraform directive and then append provided lifecycle attributes
+Lifecycle adds an empty line and the 'lifecycle' terraform directive and then append provided lifecycle attributes.
 
 ```golang
 // resource with 'lifecycle' directive
@@ -276,31 +293,31 @@ resource "res2_name" "res2_id" {
 
 `func (s *BlockSignature) SetElements(elements BodyElements)`
 
-SetElements overrides existing elements by provided ones
+SetElements overrides existing elements by provided ones.
 
 ### type [BodyElement](/body_element.go#L24)
 
 `type BodyElement struct { ... }`
 
-BodyElement is a wrapper for more or less anything that can be appended to a BlockSignature
+BodyElement is a wrapper for more or less anything that can be appended to a BlockSignature.
 
 #### func [NewBodyAttribute](/body_element.go#L14)
 
 `func NewBodyAttribute(name string, attr cty.Value) BodyElement`
 
-NewBodyAttribute returns an Attribute BodyElement
+NewBodyAttribute returns an Attribute BodyElement.
 
 #### func [NewBodyBlock](/body_element.go#L9)
 
 `func NewBodyBlock(block *BlockSignature) BodyElement`
 
-NewBodyBlock returns a Block BodyElement
+NewBodyBlock returns a Block BodyElement.
 
 #### func [NewBodyEmptyLine](/body_element.go#L19)
 
 `func NewBodyEmptyLine() BodyElement`
 
-NewBodyEmptyLine returns an empty line BodyElement
+NewBodyEmptyLine returns an empty line BodyElement.
 
 #### func (BodyElement) [Build](/body_element.go#L77)
 
@@ -308,7 +325,7 @@ NewBodyEmptyLine returns an empty line BodyElement
 
 Build convert the current BodyElement into a `hclwrite.Block`
 
-it panics if BodyElement is not a block (use `IsBodyBlock()` first)
+it panics if BodyElement is not a block (use `IsBodyBlock()` first).
 
 #### func (BodyElement) [GetBodyAttribute](/body_element.go#L57)
 
@@ -316,7 +333,7 @@ it panics if BodyElement is not a block (use `IsBodyBlock()` first)
 
 GetBodyAttribute returns the value of the attribute behind the BodyElement
 
-It panics if BodyElement is not an attribute (use `IsBodyAttribute()` first)
+It panics if BodyElement is not an attribute (use `IsBodyAttribute()` first).
 
 #### func (BodyElement) [GetBodyBlock](/body_element.go#L67)
 
@@ -324,43 +341,43 @@ It panics if BodyElement is not an attribute (use `IsBodyAttribute()` first)
 
 GetBodyBlock returns the block behind the BodyElement
 
-it panics if BodyElement is not a block (use `IsBodyBlock()` first)
+it panics if BodyElement is not a block (use `IsBodyBlock()` first).
 
 #### func (BodyElement) [GetName](/body_element.go#L35)
 
 `func (e BodyElement) GetName() string`
 
-GetName returns the name of the BodyElement
+GetName returns the name of the BodyElement.
 
 #### func (BodyElement) [IsBodyAttribute](/body_element.go#L45)
 
 `func (e BodyElement) IsBodyAttribute() bool`
 
-IsBodyAttribute returns true if the BodyElement is an attribute
+IsBodyAttribute returns true if the BodyElement is an attribute.
 
 #### func (BodyElement) [IsBodyBlock](/body_element.go#L40)
 
 `func (e BodyElement) IsBodyBlock() bool`
 
-IsBodyBlock returns true if the BodyElement is a block
+IsBodyBlock returns true if the BodyElement is a block.
 
 #### func (BodyElement) [IsBodyEmptyLine](/body_element.go#L50)
 
 `func (e BodyElement) IsBodyEmptyLine() bool`
 
-IsBodyEmptyLine returns true if the BodyElement is an empty line
+IsBodyEmptyLine returns true if the BodyElement is an empty line.
 
 ### type [BodyElements](/body_element.go#L32)
 
 `type BodyElements []BodyElement`
 
-BodyElements is a simple wrapper for a list of BodyElement
+BodyElements is a simple wrapper for a list of BodyElement.
 
 ### type [IdentTokenMatcher](/ident_token_matcher.go#L32)
 
 `type IdentTokenMatcher struct { ... }`
 
-IdentTokenMatcher is a simple implementation for IdentTokenMatcherInterface
+IdentTokenMatcher is a simple implementation for IdentTokenMatcherInterface.
 
 #### func [NewIdentTokenMatcher](/ident_token_matcher.go#L22)
 
@@ -368,35 +385,35 @@ IdentTokenMatcher is a simple implementation for IdentTokenMatcherInterface
 
 NewIdentTokenMatcher returns an instance of IdentTokenMatcher with provided list of prefix to consider as 'ident' tokens
 
-`local.`, `var.` and `data.` tokens will be considered as 'ident' tokens by default
+`local.`, `var.` and `data.` tokens will be considered as 'ident' tokens by default.
 
 #### func (IdentTokenMatcher) [IsIdentToken](/ident_token_matcher.go#L38)
 
 `func (m IdentTokenMatcher) IsIdentToken(s string) bool`
 
-IsIdentToken is the implementation for IdentTokenMatcherInterface
+IsIdentToken is the implementation for IdentTokenMatcherInterface.
 
 ### type [IdentTokenMatcherInterface](/ident_token_matcher.go#L27)
 
 `type IdentTokenMatcherInterface interface { ... }`
 
-IdentTokenMatcherInterface is a simple interface declaring required method to detect an 'ident' token
+IdentTokenMatcherInterface is a simple interface declaring required method to detect an 'ident' token.
 
-### type [LifecycleCondition](/block_signature_extra.go#L56)
+### type [LifecycleCondition](/block_signature_extra.go#L83)
 
 `type LifecycleCondition struct { ... }`
 
 LifecycleCondition is used for Precondition and Postcondition property of LifecycleConfig
-It's basically a wrapper for terraform lifecycle pre- and post-conditions
+It's basically a wrapper for terraform lifecycle pre- and post-conditions.
 
-### type [LifecycleConfig](/block_signature_extra.go#L19)
+### type [LifecycleConfig](/block_signature_extra.go#L42)
 
 `type LifecycleConfig struct { ... }`
 
 LifecycleConfig is used as argument for `Lifecycle()` method
-It's basically a wrapper for terraform `lifecycle` directive
+It's basically a wrapper for terraform `lifecycle` directive.
 
-#### func (*LifecycleConfig) [SetCreateBeforeDestroy](/block_signature_extra.go#L37)
+#### func (*LifecycleConfig) [SetCreateBeforeDestroy](/block_signature_extra.go#L62)
 
 `func (c *LifecycleConfig) SetCreateBeforeDestroy(b bool)`
 
@@ -416,7 +433,7 @@ config := LifecycleConfig{}
 config.SetCreateBeforeDestroy(true)
 ```
 
-#### func (*LifecycleConfig) [SetPreventDestroy](/block_signature_extra.go#L50)
+#### func (*LifecycleConfig) [SetPreventDestroy](/block_signature_extra.go#L77)
 
 `func (c *LifecycleConfig) SetPreventDestroy(b bool)`
 
@@ -442,7 +459,7 @@ config.SetPreventDestroy(true)
 
 ValueGenerator is able to detect "ident" tokens and convert them into a special cty capsule.
 Capsule will then be converted to `hclwrite.tokens`
-It allows to write values like `var.my_var`, `locals.my_local` or `data.res_name.val_name` without any quotes
+It allows to write values like `var.my_var`, `locals.my_local` or `data.res_name.val_name` without any quotes.
 
 ```golang
 basicStringValue := "basic_value"
@@ -494,60 +511,60 @@ my_block {
 `func NewValueGenerator(identPrefixList ...string) ValueGenerator`
 
 NewValueGenerator returns a new ValueGenerator with the default 'ident' tokens matcher augmented with provided list
-of token to consider as 'ident' tokens
+of token to consider as 'ident' tokens.
 
 #### func [NewValueGeneratorWith](/value_generator.go#L26)
 
 `func NewValueGeneratorWith(matcher IdentTokenMatcherInterface) ValueGenerator`
 
-NewValueGeneratorWith returns a new ValueGenerator with the provided matcher
+NewValueGeneratorWith returns a new ValueGenerator with the provided matcher.
 
 #### func (*ValueGenerator) [FromString](/value_generator.go#L88)
 
 `func (g *ValueGenerator) FromString(s *string, t cty.Type) *cty.Value`
 
 FromString convert a string to `cty.Value` of the provided type
-If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`
+If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`.
 
 #### func (*ValueGenerator) [ToBool](/value_generator.go#L56)
 
 `func (g *ValueGenerator) ToBool(s *string) *cty.Value`
 
 ToBool convert a string to `cty.Value` boolean which will be rendered as true or false value by terraform HCL
-If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`
+If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`.
 
 #### func (*ValueGenerator) [ToIdent](/value_generator.go#L31)
 
 `func (g *ValueGenerator) ToIdent(s *string) *cty.Value`
 
-ToIdent converts a string to a special `cty.Value` capsule holding `hclwrite.tokens`
+ToIdent converts a string to a special `cty.Value` capsule holding `hclwrite.tokens`.
 
 #### func (*ValueGenerator) [ToIdentList](/value_generator.go#L40)
 
 `func (g *ValueGenerator) ToIdentList(list *[]string) *cty.Value`
 
-ToIdentList converts a list of string to `cty.Value` list containing capsules holding `hclwrite.tokens`
+ToIdentList converts a list of string to `cty.Value` list containing capsules holding `hclwrite.tokens`.
 
 #### func (*ValueGenerator) [ToNumber](/value_generator.go#L62)
 
 `func (g *ValueGenerator) ToNumber(s *string) *cty.Value`
 
 ToNumber convert a string to `cty.Value` number which will be rendered as numeric value by terraform HCL
-If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`
+If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`.
 
 #### func (*ValueGenerator) [ToString](/value_generator.go#L50)
 
 `func (g *ValueGenerator) ToString(s *string) *cty.Value`
 
 ToString convert a string to `cty.Value` string which will be rendered as quoted string by terraform HCL
-If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`
+If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`.
 
 #### func (*ValueGenerator) [ToStringList](/value_generator.go#L68)
 
 `func (g *ValueGenerator) ToStringList(list *[]string) *cty.Value`
 
 ToStringList convert a string list to `cty.Value` string list which will be rendered as quoted string list by terraform HCL
-If a provided string item is actually an 'ident' token, `cty.Value` item will be a capsule holding `hclwrite.tokens`
+If a provided string item is actually an 'ident' token, `cty.Value` item will be a capsule holding `hclwrite.tokens`.
 
 ## Sub Packages
 

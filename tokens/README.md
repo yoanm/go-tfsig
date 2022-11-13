@@ -8,7 +8,7 @@ It also provides an easy way to encapsulate hclwrite tokens into a cty.Value and
 
 ```golang
 const (
-    // HclwriteTokensCtyTypeName is the friendly cty name for the capsule encapsulating `hclwrite.Tokens`
+    // HclwriteTokensCtyTypeName is the friendly cty name for the capsule encapsulating `hclwrite.Tokens`.
     HclwriteTokensCtyTypeName = "cty.CapsuleVal(hclwrite.Tokens)"
 )
 ```
@@ -20,7 +20,7 @@ const (
 `func ContainsCapsule(valPtr *cty.Value) bool`
 
 ContainsCapsule will deep check if provided value contains a special capsule encapsulating `hclwrite.Tokens`
-(and therefore requires special process to de-encapsulate it)
+(and therefore requires special process to de-encapsulate it).
 
 ### func [FromValue](./main.go#L64)
 
@@ -28,7 +28,7 @@ ContainsCapsule will deep check if provided value contains a special capsule enc
 
 FromValue takes a `cty.Value` and extract the `hclwrite.Tokens` from it.
 
-It panics if the provided value is not a special `cty.Value` capsule
+It panics if the provided value is not a special `cty.Value` capsule.
 
 ### func [Generate](./generator.go#L14)
 
@@ -36,7 +36,7 @@ It panics if the provided value is not a special `cty.Value` capsule
 
 Generate converts a `cty.Value` to `hclwrite.Tokens`
 
-It takes care of special `cty.Value` capsule encapsulating `hclwrite.Tokens`
+It takes care of special `cty.Value` capsule encapsulating `hclwrite.Tokens`.
 
 ```golang
 listOfCapsule, err := gocty.ToCtyValue(
@@ -139,13 +139,13 @@ Tuple with capsule: "[\"A_value\",B_value,2]"
 
 GenerateFromIterable takes a list of `hclwrite.Tokens` and create related `hclwrite.Tokens` based on the provided `cty.Type`
 
-It panics if provided type is not an iterable type
+It panics if provided type is not an iterable type.
 
 ### func [IsCapsuleType](./token_capsule.go#L8)
 
 `func IsCapsuleType(t cty.Type) bool`
 
-IsCapsuleType returns true if provided `cty.Type` is a special capsule encapsulating `hclwrite.Tokens`
+IsCapsuleType returns true if provided `cty.Type` is a special capsule encapsulating `hclwrite.Tokens`.
 
 ### func [MergeIterableAndGenerate](./generator.go#L85)
 
@@ -153,13 +153,13 @@ IsCapsuleType returns true if provided `cty.Type` is a special capsule encapsula
 
 MergeIterableAndGenerate takes a `cty.Value` collection, append new elements and convert the result to related `hclwrite.Tokens`
 
-It panics if provided collection is not iterable
+It panics if provided collection is not iterable.
 
 ### func [NewCommaToken](./token.go#L14)
 
 `func NewCommaToken() *hclwrite.Token`
 
-NewCommaToken returns a `hclwrite.Token` with `hclsyntax.TokenComma` type
+NewCommaToken returns a `hclwrite.Token` with `hclsyntax.TokenComma` type.
 
 ### func [NewCommaTokens](./tokens.go#L17)
 
@@ -167,13 +167,13 @@ NewCommaToken returns a `hclwrite.Token` with `hclsyntax.TokenComma` type
 
 NewCommaTokens creates a `hclwrite.Tokens` containing a `hclwrite.Token` with `hclsyntax.TokenComma` type
 
-See also `NewCommaToken()`
+See also `NewCommaToken()`.
 
 ### func [NewEqualToken](./token.go#L19)
 
 `func NewEqualToken() *hclwrite.Token`
 
-NewEqualToken returns a `hclwrite.Token` with `hclsyntax.TokenEqual` type
+NewEqualToken returns a `hclwrite.Token` with `hclsyntax.TokenEqual` type.
 
 ### func [NewEqualTokens](./tokens.go#L24)
 
@@ -181,14 +181,14 @@ NewEqualToken returns a `hclwrite.Token` with `hclsyntax.TokenEqual` type
 
 NewEqualTokens creates a `hclwrite.Tokens` containing a `hclwrite.Token` with `hclsyntax.TokenEqual` type
 
-See also `NewEqualToken()`
+See also `NewEqualToken()`.
 
 ### func [NewIdentListValue](./main.go#L37)
 
 `func NewIdentListValue(list []string) *cty.Value`
 
 NewIdentListValue tales a list of string which should be all considered as 'ident' tokens
-and converts them into a cty list containing special `cty.Value` capsule
+and converts them into a cty list containing special `cty.Value` capsule.
 
 ```golang
 identListStringValue := []string{"explicit_ident_item.foo", "explicit_ident_item.bar"}
@@ -211,7 +211,7 @@ attr = [explicit_ident_item.foo, explicit_ident_item.bar]
 
 `func NewIdentToken(b []byte) *hclwrite.Token`
 
-NewIdentToken returns a `hclwrite.Token` with `hclsyntax.TokenIdent` type encapsulating provided bytes
+NewIdentToken returns a `hclwrite.Token` with `hclsyntax.TokenIdent` type encapsulating provided bytes.
 
 ### func [NewIdentTokens](./tokens.go#L10)
 
@@ -219,13 +219,13 @@ NewIdentToken returns a `hclwrite.Token` with `hclsyntax.TokenIdent` type encaps
 
 NewIdentTokens takes a string and convert it to `hclwrite.Tokens` containing a `hclwrite.Token` with `hclsyntax.TokenIdent` type
 
-See also `NewIdentToken()`
+See also `NewIdentToken()`.
 
 ### func [NewIdentValue](./main.go#L29)
 
 `func NewIdentValue(s string) *cty.Value`
 
-NewIdentValue takes a string which should be considered as 'ident' token and converts it to a special `cty.Value` capsule
+NewIdentValue takes a string which should be considered as 'ident' token and converts it to a special `cty.Value` capsule.
 
 ```golang
 identStringValue := "explicit_ident.foo"
@@ -248,7 +248,7 @@ attr = explicit_ident.foo
 
 `func NewLineToken() *hclwrite.Token`
 
-NewLineToken returns a `hclwrite.Token` with `hclsyntax.TokenNewline` type
+NewLineToken returns a `hclwrite.Token` with `hclsyntax.TokenNewline` type.
 
 ### func [NewLineTokens](./tokens.go#L31)
 
@@ -256,7 +256,7 @@ NewLineToken returns a `hclwrite.Token` with `hclsyntax.TokenNewline` type
 
 NewLineTokens creates a `hclwrite.Tokens` containing a `hclwrite.Token` with `hclsyntax.TokenNewline` type
 
-See also `NewLineToken()`
+See also `NewLineToken()`.
 
 ### func [SplitIterable](./generator.go#L126)
 
@@ -266,7 +266,7 @@ SplitIterable takes a `cty.Value` collection and returns the start/end tokens an
 
 It can be used to later append new elements to the collection (see `MergeIterableAndGenerate()`)
 
-It panics if provided collection is not iterable
+It panics if provided collection is not iterable.
 
 ```golang
 list, err := gocty.ToCtyValue(
@@ -395,7 +395,7 @@ Tuple:
 
 `func ToValue(tokens hclwrite.Tokens) cty.Value`
 
-ToValue takes `hclwrite.Tokens` value and converts it to special `cty.Value` capsule
+ToValue takes `hclwrite.Tokens` value and converts it to special `cty.Value` capsule.
 
 ---
 Readme created from Go doc with [goreadme](https://github.com/posener/goreadme)
