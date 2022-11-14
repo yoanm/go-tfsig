@@ -6,7 +6,49 @@ It provides ability to generate block signature which are way easier to manipula
 
 ## Functions
 
-### func [AppendBlockIfNotNil](/utils.go#L22)
+### func [AppendAttributeIfNotNil](/utils.go#L31)
+
+`func AppendAttributeIfNotNil(sig *BlockSignature, attrName string, v *cty.Value)`
+
+AppendAttributeIfNotNil appends the provided attribute to the signature only if not nil
+
+It simply avoids an `if` in your code.
+
+```golang
+hclFile := hclwrite.NewEmptyFile()
+evenFn := func(i int) *cty.Value {
+    if i%2 == 0 {
+        return nil
+    }
+
+    val := cty.StringVal(fmt.Sprintf("val%d", i))
+
+    return &val
+}
+
+sig := tfsig.NewEmptyResource("my_res", "res_id")
+
+tfsig.AppendAttributeIfNotNil(sig, "attr_0", evenFn(0))
+tfsig.AppendAttributeIfNotNil(sig, "attr_1", evenFn(1))
+tfsig.AppendAttributeIfNotNil(sig, "attr_2", evenFn(2))
+tfsig.AppendAttributeIfNotNil(sig, "attr_3", evenFn(3))
+tfsig.AppendAttributeIfNotNil(sig, "attr_4", evenFn(4))
+
+hclFile.Body().AppendBlock(sig.Build())
+
+fmt.Println(string(hclFile.Bytes()))
+```
+
+ Output:
+
+```terraform
+resource "my_res" "res_id" {
+  attr_1 = "val1"
+  attr_3 = "val3"
+}
+```
+
+### func [AppendBlockIfNotNil](/utils.go#L11)
 
 `func AppendBlockIfNotNil(body *hclwrite.Body, block *hclwrite.Block)`
 
@@ -42,7 +84,54 @@ block3 {
 }
 ```
 
-### func [AppendNewLineAndBlockIfNotNil](/utils.go#L32)
+### func [AppendChildIfNotNil](/utils.go#L41)
+
+`func AppendChildIfNotNil(sig *BlockSignature, child *BlockSignature)`
+
+AppendChildIfNotNil appends the provided child to the signature only if not nil.
+And in case there is existing elements, it prepends an empty line
+
+It simply avoids two `if` in your code.
+
+```golang
+hclFile := hclwrite.NewEmptyFile()
+oddFn := func(i int) *tfsig.BlockSignature {
+    if i%2 != 0 {
+        return nil
+    }
+
+    return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i))
+}
+
+sig := tfsig.NewEmptyResource("my_res", "res_id")
+
+tfsig.AppendChildIfNotNil(sig, oddFn(0))
+tfsig.AppendChildIfNotNil(sig, oddFn(1))
+tfsig.AppendChildIfNotNil(sig, oddFn(2))
+tfsig.AppendChildIfNotNil(sig, oddFn(3))
+tfsig.AppendChildIfNotNil(sig, oddFn(4))
+
+hclFile.Body().AppendBlock(sig.Build())
+
+fmt.Println(string(hclFile.Bytes()))
+```
+
+ Output:
+
+```terraform
+resource "my_res" "res_id" {
+  block0 {
+  }
+
+  block2 {
+  }
+
+  block4 {
+  }
+}
+```
+
+### func [AppendNewLineAndBlockIfNotNil](/utils.go#L21)
 
 `func AppendNewLineAndBlockIfNotNil(body *hclwrite.Body, block *hclwrite.Block)`
 
@@ -83,7 +172,7 @@ block4 {
 }
 ```
 
-### func [ToTerraformIdentifier](/utils.go#L42)
+### func [ToTerraformIdentifier](/terraform_helpers.go#L20)
 
 `func ToTerraformIdentifier(s string) string`
 
@@ -116,82 +205,6 @@ an.identifier becomes an-identifier
 BlockSignature is basically a wrapper to HCL blocks
 It holds a type, the block labels and its elements.
 
-### AppendAttributeIfNotNil
-
-```golang
-hclFile := hclwrite.NewEmptyFile()
-evenFn := func(i int) *cty.Value {
-    if i%2 == 0 {
-        return nil
-    }
-
-    val := cty.StringVal(fmt.Sprintf("val%d", i))
-
-    return &val
-}
-
-sig := tfsig.NewEmptyResource("my_res", "res_id")
-
-sig.AppendAttributeIfNotNil("attr_0", evenFn(0))
-sig.AppendAttributeIfNotNil("attr_1", evenFn(1))
-sig.AppendAttributeIfNotNil("attr_2", evenFn(2))
-sig.AppendAttributeIfNotNil("attr_3", evenFn(3))
-sig.AppendAttributeIfNotNil("attr_4", evenFn(4))
-
-hclFile.Body().AppendBlock(sig.Build())
-
-fmt.Println(string(hclFile.Bytes()))
-```
-
- Output:
-
-```terraform
-resource "my_res" "res_id" {
-  attr_1 = "val1"
-  attr_3 = "val3"
-}
-```
-
-### AppendChildIfNotNil
-
-```golang
-hclFile := hclwrite.NewEmptyFile()
-oddFn := func(i int) *tfsig.BlockSignature {
-    if i%2 != 0 {
-        return nil
-    }
-
-    return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i))
-}
-
-sig := tfsig.NewEmptyResource("my_res", "res_id")
-
-sig.AppendChildIfNotNil(oddFn(0))
-sig.AppendChildIfNotNil(oddFn(1))
-sig.AppendChildIfNotNil(oddFn(2))
-sig.AppendChildIfNotNil(oddFn(3))
-sig.AppendChildIfNotNil(oddFn(4))
-
-hclFile.Body().AppendBlock(sig.Build())
-
-fmt.Println(string(hclFile.Bytes()))
-```
-
- Output:
-
-```terraform
-resource "my_res" "res_id" {
-  block0 {
-  }
-
-  block2 {
-  }
-
-  block4 {
-  }
-}
-```
-
 #### func [NewEmptyResource](/block_signature.go#L32)
 
 `func NewEmptyResource(name, id string, labels ...string) *BlockSignature`
@@ -216,28 +229,11 @@ NewSignature returns a BlockSignature pointer filled with provided labels and el
 
 AppendAttribute appends an attribute to the block.
 
-#### func (*BlockSignature) [AppendAttributeIfNotNil](/block_signature_extra.go#L12)
-
-`func (sig *BlockSignature) AppendAttributeIfNotNil(attrName string, v *cty.Value)`
-
-AppendAttrIfNotNil appends the provided attribute only if not nil
-
-It simply avoids an `if` in your code.
-
 #### func (*BlockSignature) [AppendChild](/block_signature.go#L75)
 
 `func (sig *BlockSignature) AppendChild(child *BlockSignature)`
 
 AppendChild appends a child block to the block.
-
-#### func (*BlockSignature) [AppendChildIfNotNil](/block_signature_extra.go#L22)
-
-`func (sig *BlockSignature) AppendChildIfNotNil(child *BlockSignature)`
-
-AppendChildIfNotNil appends the provided child only if not nil. And in case there is existing elements,
-it prepends an empty line
-
-It simply avoids an `if` in your code.
 
 #### func (*BlockSignature) [AppendElement](/block_signature.go#L65)
 

@@ -1,19 +1,8 @@
 package tfsig
 
 import (
-	"regexp"
-
 	"github.com/hashicorp/hcl/v2/hclwrite"
-)
-
-var (
-	// From doc
-	// > Identifiers can contain letters, digits, underscores (`_`), and hyphens (`-`).
-	// > The first character of an identifier must not be a digit, to avoid ambiguity with literal numbers.
-	// > For complete identifier rules, Terraform implements the Unicode identifier syntax, extended to include the
-	// ASCII hyphen character -.
-	invalidCharMatcher      = regexp.MustCompile(`[^a-zA-Z0-9_-]`)
-	invalidFirstCharMatcher = regexp.MustCompile(`^[0-9-]`)
+	"github.com/zclconf/go-cty/cty"
 )
 
 // AppendBlockIfNotNil appends the provided block to the provided body only if block is not nil
@@ -36,12 +25,25 @@ func AppendNewLineAndBlockIfNotNil(body *hclwrite.Body, block *hclwrite.Block) {
 	}
 }
 
-// ToTerraformIdentifier converts a string to a terraform identifier, by converting not allowed characters to `-`
+// AppendAttributeIfNotNil appends the provided attribute to the signature only if not nil
 //
-// And if provided value starts with a character not allowed as first character, it replaces it by `_`.
-func ToTerraformIdentifier(s string) string {
-	id := invalidCharMatcher.ReplaceAllString(s, "-")
+// It simply avoids an `if` in your code.
+func AppendAttributeIfNotNil(sig *BlockSignature, attrName string, v *cty.Value) {
+	if v != nil {
+		sig.AppendAttribute(attrName, *v)
+	}
+}
 
-	// Identifier must start with a letter or underscore !
-	return invalidFirstCharMatcher.ReplaceAllString(id, "_")
+// AppendChildIfNotNil appends the provided child to the signature only if not nil.
+// And in case there is existing elements, it prepends an empty line
+//
+// It simply avoids two `if` in your code.
+func AppendChildIfNotNil(sig *BlockSignature, child *BlockSignature) {
+	if child != nil {
+		if len(sig.GetElements()) > 0 {
+			sig.AppendEmptyLine()
+		}
+
+		sig.AppendChild(child)
+	}
 }

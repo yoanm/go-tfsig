@@ -4,22 +4,10 @@ import (
 	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hclwrite"
+	"github.com/zclconf/go-cty/cty"
 
 	"github.com/yoanm/go-tfsig"
 )
-
-func ExampleToTerraformIdentifier() {
-	fmt.Printf("a_valid-identifier becomes %s\n", tfsig.ToTerraformIdentifier("a_valid-identifier"))
-	fmt.Printf(".github becomes %s\n", tfsig.ToTerraformIdentifier(".github"))
-	fmt.Printf("an.identifier becomes %s\n", tfsig.ToTerraformIdentifier("an.identifier"))
-	fmt.Printf("0id becomes %s\n", tfsig.ToTerraformIdentifier("0id"))
-
-	// Output:
-	// a_valid-identifier becomes a_valid-identifier
-	// .github becomes _github
-	// an.identifier becomes an-identifier
-	// 0id becomes _id
-}
 
 func ExampleAppendBlockIfNotNil() {
 	hclFile := hclwrite.NewEmptyFile()
@@ -70,5 +58,69 @@ func ExampleAppendNewLineAndBlockIfNotNil() {
 	// }
 	//
 	// block4 {
+	// }
+}
+
+func ExampleAppendAttributeIfNotNil() {
+	hclFile := hclwrite.NewEmptyFile()
+	evenFn := func(i int) *cty.Value {
+		if i%2 == 0 {
+			return nil
+		}
+
+		val := cty.StringVal(fmt.Sprintf("val%d", i))
+
+		return &val
+	}
+
+	sig := tfsig.NewEmptyResource("my_res", "res_id")
+
+	tfsig.AppendAttributeIfNotNil(sig, "attr_0", evenFn(0))
+	tfsig.AppendAttributeIfNotNil(sig, "attr_1", evenFn(1))
+	tfsig.AppendAttributeIfNotNil(sig, "attr_2", evenFn(2))
+	tfsig.AppendAttributeIfNotNil(sig, "attr_3", evenFn(3))
+	tfsig.AppendAttributeIfNotNil(sig, "attr_4", evenFn(4))
+
+	hclFile.Body().AppendBlock(sig.Build())
+
+	fmt.Println(string(hclFile.Bytes()))
+	// Output:
+	// resource "my_res" "res_id" {
+	//   attr_1 = "val1"
+	//   attr_3 = "val3"
+	// }
+}
+
+func ExampleAppendChildIfNotNil() {
+	hclFile := hclwrite.NewEmptyFile()
+	oddFn := func(i int) *tfsig.BlockSignature {
+		if i%2 != 0 {
+			return nil
+		}
+
+		return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i))
+	}
+
+	sig := tfsig.NewEmptyResource("my_res", "res_id")
+
+	tfsig.AppendChildIfNotNil(sig, oddFn(0))
+	tfsig.AppendChildIfNotNil(sig, oddFn(1))
+	tfsig.AppendChildIfNotNil(sig, oddFn(2))
+	tfsig.AppendChildIfNotNil(sig, oddFn(3))
+	tfsig.AppendChildIfNotNil(sig, oddFn(4))
+
+	hclFile.Body().AppendBlock(sig.Build())
+
+	fmt.Println(string(hclFile.Bytes()))
+	// Output:
+	// resource "my_res" "res_id" {
+	//   block0 {
+	//   }
+	//
+	//   block2 {
+	//   }
+	//
+	//   block4 {
+	//   }
 	// }
 }
