@@ -1,0 +1,9 @@
+engines:
+  duplication:
+    exclude_paths:
+      - "**_test.go"
+    skipDuplicateFiles: true
+exclude_paths:
+  - "DOC.md" # Auto-generated doc
+  - "testutils/README.md" # Auto-generated doc
+  - "tokens/README.md" # Auto-generated doc

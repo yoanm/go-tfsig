@@ -1,4 +1,4 @@
-package tfsig
+package tfsig_test
 
 import (
 	"testing"
@@ -7,20 +7,23 @@ import (
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
 
+	"github.com/yoanm/go-tfsig"
 	"github.com/yoanm/go-tfsig/testutils"
 	"github.com/yoanm/go-tfsig/tokens"
 )
 
 func TestNewEmptyResource(t *testing.T) {
-	resFull := NewEmptyResource("res_name", "res_id")
+	t.Parallel()
+
+	resFull := tfsig.NewResource("res_name", "res_id")
 	resFull.AppendAttribute("attribute1", cty.StringVal("value1"))
 	resFull.AppendEmptyLine()
 
-	block1 := NewEmptySignature("block1", "block1_label1", "block1_label2", "block1_label3", "block1_label4")
+	block1 := tfsig.NewSignature("block1", "block1_label1", "block1_label2", "block1_label3", "block1_label4")
 	block1.AppendAttribute("attribute21", cty.BoolVal(true))
 	block1.AppendAttribute("attribute22", cty.NumberIntVal(3))
 
-	block11 := NewEmptySignature("block11")
+	block11 := tfsig.NewSignature("block11")
 	listAttr, _ := gocty.ToCtyValue([]string{"A", "B"}, cty.List(cty.String))
 	block11.AppendAttribute("attribute211", listAttr)
 	block11.AppendEmptyLine()
@@ -34,7 +37,7 @@ func TestNewEmptyResource(t *testing.T) {
 	resFull.AppendAttribute("attribute2", cty.StringVal("value2"))
 
 	cases := map[string]struct {
-		value      *BlockSignature
+		value      *tfsig.BlockSignature
 		goldenFile string
 	}{
 		"Full": {
@@ -42,17 +45,20 @@ func TestNewEmptyResource(t *testing.T) {
 			"resource.full",
 		},
 		"Empty": {
-			NewEmptyResource("res_name", "res_id"),
+			tfsig.NewResource("res_name", "res_id"),
 			"resource.empty",
 		},
 	}
 
-	for tcname, tc := range cases {
+	for tcname, tcase := range cases {
+		tcase := tcase // For parallel execution
+
 		t.Run(
 			tcname,
 			func(t *testing.T) {
-				if err := testutils.EnsureBlockFileEqualsGoldenFile(tc.value.Build(), tc.goldenFile); err != nil {
-					t.Errorf("Case \"%s\": %v", tcname, err)
+				t.Parallel()
+				if err := testutils.EnsureBlockFileEqualsGoldenFile(tcase.value.Build(), tcase.goldenFile); err != nil {
+					t.Errorf("Case \"%s\": %v", t.Name(), err)
 				}
 			},
 		)
@@ -60,15 +66,17 @@ func TestNewEmptyResource(t *testing.T) {
 }
 
 func TestBlockSignature_BuildTokens(t *testing.T) {
-	res := NewEmptyResource("res_name", "res_id")
+	t.Parallel()
+
+	res := tfsig.NewResource("res_name", "res_id")
 	res.AppendAttribute("attribute1", cty.StringVal("value1"))
 	res.AppendEmptyLine()
 
-	block1 := NewEmptySignature("block1", "block1_label1", "block1_label2", "block1_label3", "block1_label4")
+	block1 := tfsig.NewSignature("block1", "block1_label1", "block1_label2", "block1_label3", "block1_label4")
 	block1.AppendAttribute("attribute21", cty.BoolVal(true))
 	block1.AppendAttribute("attribute22", cty.NumberIntVal(3))
 
-	block11 := NewEmptySignature("block11")
+	block11 := tfsig.NewSignature("block11")
 	listAttr, _ := gocty.ToCtyValue([]string{"A", "B"}, cty.List(cty.String))
 	block11.AppendAttribute("attribute211", listAttr)
 	block11.AppendEmptyLine()

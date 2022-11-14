@@ -1,5 +1,12 @@
 # Based on that awesome makefile https://github.com/dunglas/symfony-docker/blob/main/docs/makefile.md#the-template
 
+# Sed in-place option behaves differently on linux and macOs
+ifeq ($(shell uname),Darwin)
+    SED_INPLACE_OPTION=-i ''
+else
+    SED_INPLACE_OPTION=-i
+endif
+
 .DEFAULT_GOAL = default
 
 .PHONY: default
@@ -26,16 +33,26 @@ configure-dev-env:
 configure-test-env: ## 🤖 Install required libraries for test environment (golint, staticcheck, etc)
 configure-test-env: configure-dev-env
 configure-test-env:
-	go install golang.org/x/lint/golint@latest
-	go install honnef.co/go/tools/cmd/staticcheck@latest
+	# Nothing to install currently
 
 ##—— 📝 Documentation —————————————————————————————————————————————————
 .PHONY: build-doc
-build-doc: ## 🗜️  Build packages documentations
+.SILENT: build-doc
+build-doc: ## 🗜️  Build packages doc
 build-doc:
+	echo "Generate doc for main package ..."
 	goreadme -constants -variabless -types -methods -functions -factories > DOC.md
-	cd testutils && goreadme -constants -variabless -types -methods -functions -factories | sed -E 's/]\((\/.+)\.go/](\/testutils\1.go/g' > README.md
-	cd tokens && goreadme -constants -variabless -types -methods -functions -factories | sed -E 's/]\((\/.+)\.go/](\/tokens\1.go/g' > README.md
+	# Add terraform style for raw blocks
+	sed ${SED_INPLACE_OPTION} -E -e ':a' -e 'N' -e '$$!ba' -e 's/```(\n)(resource ")/```terraform\1\2/g' DOC.md
+	# Generate doc for sub-packages, add terraform style for raw blocks and fix links
+	find * -prune -type d -name "tokens" -or -name "testutils" | while IFS= read -r d; do \
+		echo "Generate doc for $$d sub-package ..."; \
+		cd $$d; \
+		goreadme -constants -variabless -types -methods -functions -factories > README.md; \
+		sed ${SED_INPLACE_OPTION} -E -e ':a' -e 'N' -e '$$!ba' -e 's/```(\n)(resource ")/```terraform\1\2/g' README.md; \
+		sed ${SED_INPLACE_OPTION} -E "s/]\((\/.+)\.go/](.\1.go/g" README.md; \
+		cd ..; \
+	done
 
 ##—— 🐹 Golang —————————————————————————————————————————————————
 .PHONY: build
@@ -45,23 +62,15 @@ $(eval build_o ?=)
 build:
 	go build -v $(build_o)
 
-.PHONY: verify
-verify: ## 🗜️  Verify dependencies
-verify:
+.PHONY: verify-deps
+verify-deps: ## 🗜️  Verify dependencies
+verify-deps:
 	go mod verify
-
-.PHONY: format
-format: ## 🗜️  Format code with go fmt command
-#### Use format_o="..." to specify format options
-$(eval format_o ?=)
-format:
-	gofmt -w -s $(format_o) .
-
 
 ##—— 🧪️ Tests —————————————————————————————————————————————————————————————
 .PHONY: test
 test: ## 🏃 Launch all tests
-test: test-vet test-lint test-staticcheck test-go
+test: test-go test-lint
 
 test-go: ## 🏃 Launch go test
 #### Use gotest_o="..." to specify options
@@ -69,20 +78,8 @@ $(eval gotest_o ?=)
 test-go:
 	go test -v  $(gotest_o) ./...
 
-test-vet: ## 🏃 Launch go vet
-#### Use vet_o="..." to specify options
-$(eval vet_o ?=)
-test-vet:
-	go vet $(vet_o) ./...
-
-test-lint: ## 🏃 Launch go lint
-#### Use lint_o="..." to specify options (-set_exit_status for instance)
-$(eval lint_o ?=-set_exit_status)
+test-lint: ## 🏃 Launch golangci-lint
+#### Use lint_o="..." to specify options
+$(eval lint_o ?=--fix)
 test-lint:
-	golint $(lint_o) ./...
-
-test-staticcheck: ## 🏃 Launch staticcheck
-#### Use staticcheck_o="..." to specify options
-$(eval staticcheck_o ?=)
-test-staticcheck:
-	staticcheck $(staticcheck_o) ./...
+	golangci-lint run $(lint_o) ./...

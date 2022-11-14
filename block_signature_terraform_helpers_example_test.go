@@ -1,15 +1,17 @@
-package tfsig
+package tfsig_test
 
 import (
 	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/zclconf/go-cty/cty"
+
+	"github.com/yoanm/go-tfsig"
 )
 
 func ExampleBlockSignature_DependsOn() {
 	// resource with 'depends_on' directive
-	sig := NewEmptyResource("res_name", "res_id")
+	sig := tfsig.NewResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 	sig.DependsOn([]string{"another_res.res_id", "another_another_res.res_id"})
 
@@ -27,20 +29,22 @@ func ExampleBlockSignature_DependsOn() {
 
 func ExampleBlockSignature_Lifecycle() {
 	// resource with 'lifecycle' directive
-	sig := NewEmptyResource("res_name", "res_id")
+	sig := tfsig.NewResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
-	config := LifecycleConfig{}
+
+	config := tfsig.LifecycleConfig{}
 	config.SetCreateBeforeDestroy(true)
 	config.SetPreventDestroy(false)
 	sig.Lifecycle(config)
 
-	sig2 := NewEmptyResource("res2_name", "res2_id")
+	sig2 := tfsig.NewResource("res2_name", "res2_id")
 	sig2.AppendAttribute("attribute1", cty.StringVal("value1"))
-	config2 := LifecycleConfig{
+
+	config2 := tfsig.LifecycleConfig{
 		IgnoreChanges: []string{"attribute1"},
-		Postcondition: &LifecycleCondition{
-			condition:    "res_name.res_id.attribute1 != \"value1\"",
-			errorMessage: "res_name.res_id.attribute1 must equal \"value1\"",
+		Postcondition: &tfsig.LifecycleCondition{
+			Condition:    "res_name.res_id.attribute1 != \"value1\"",
+			ErrorMessage: "res_name.res_id.attribute1 must equal \"value1\"",
 		},
 	}
 	sig2.Lifecycle(config2)

@@ -56,41 +56,19 @@ jobs:
           cache-dependency-path: ./go.sum
 
       - name: Verify dependencies
-        run: make verify
+        run: make verify-deps
 
-      - name: Go vet
-        run: make test-vet
-
-      - name: Install test libs
-        run: make configure-test-env
-
-      - name: Staticcheck
-        run: make test-staticcheck
-
-      - name: Lint
-        run: make test-lint
-
-      - name: Format
-        run: |
-          if [ ! "$(gofmt -l . | grep -v "vendor/" | wc -l)" -eq 0 ]; then
-              # Create file annotations
-              echo "::error::Following files need formatting:"
-              gofmt -l . | grep -v "vendor/" | while read line ; do echo "::error file=$line::$line is wrongly formatted" ; done;
-              exit 1;
-          fi
-          echo "All source files correctly formatted 👌"
-          exit 0
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
 
       - name: Documentation
         env:
           CI: false # If true, command thinks it's goreadme GHAction context (see https://github.com/posener/goreadme/issues/120)
         run: |
-          make build-doc
+          make configure-dev-env && make build-doc
           if [ ! "$(git status -s | wc -l)" -eq 0 ]; then
               echo "::error::Documentation is not up to date ! Run 'make build-doc' "
               exit 1;
           fi
           echo "Documentation is up to date 👌"
           exit 0
-
-
