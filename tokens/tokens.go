@@ -4,7 +4,8 @@ import (
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
 
-// NewIdentTokens takes a string and convert it to `hclwrite.Tokens` containing a `hclwrite.Token` with `hclsyntax.TokenIdent` type
+// NewIdentTokens takes a string and convert it to `hclwrite.Tokens` containing a `hclwrite.Token`
+// with `hclsyntax.TokenIdent` type
 //
 // See also `NewIdentToken()`.
 func NewIdentTokens(s string) hclwrite.Tokens {

@@ -42,57 +42,59 @@ type BlockSignature struct {
 }
 
 // GetType returns the type of the block.
-func (s *BlockSignature) GetType() string {
-	return s.typeName
+func (sig *BlockSignature) GetType() string {
+	return sig.typeName
 }
 
 // GetLabels returns labels attached to the block.
-func (s *BlockSignature) GetLabels() []string {
-	return s.labels
+func (sig *BlockSignature) GetLabels() []string {
+	return sig.labels
 }
 
 // GetElements returns all elements attached to the block.
-func (s *BlockSignature) GetElements() BodyElements {
-	return s.elements
+func (sig *BlockSignature) GetElements() BodyElements {
+	return sig.elements
 }
 
 // SetElements overrides existing elements by provided ones.
-func (s *BlockSignature) SetElements(elements BodyElements) {
-	s.elements = elements
+func (sig *BlockSignature) SetElements(elements BodyElements) {
+	sig.elements = elements
 }
 
 // AppendElement appends an element to the block.
-func (s *BlockSignature) AppendElement(element BodyElement) {
-	s.elements = append(s.elements, element)
+func (sig *BlockSignature) AppendElement(element BodyElement) {
+	sig.elements = append(sig.elements, element)
 }
 
 // AppendAttribute appends an attribute to the block.
-func (s *BlockSignature) AppendAttribute(name string, value cty.Value) {
-	s.AppendElement(NewBodyAttribute(name, value))
+func (sig *BlockSignature) AppendAttribute(name string, value cty.Value) {
+	sig.AppendElement(NewBodyAttribute(name, value))
 }
 
 // AppendChild appends a child block to the block.
-func (s *BlockSignature) AppendChild(child *BlockSignature) {
-	s.AppendElement(NewBodyBlock(child))
+func (sig *BlockSignature) AppendChild(child *BlockSignature) {
+	sig.AppendElement(NewBodyBlock(child))
 }
 
 // AppendEmptyLine appends an empty line to the block.
-func (s *BlockSignature) AppendEmptyLine() {
-	s.AppendElement(NewBodyEmptyLine())
+func (sig *BlockSignature) AppendEmptyLine() {
+	sig.AppendElement(NewBodyEmptyLine())
 }
 
 // Build creates a `hclwrite.Block` and appends block's elements to it.
-func (s *BlockSignature) Build() *hclwrite.Block {
-	block := hclwrite.NewBlock(s.GetType(), s.GetLabels())
+func (sig *BlockSignature) Build() *hclwrite.Block {
+	block := hclwrite.NewBlock(sig.GetType(), sig.GetLabels())
 
-	s.writeElementsToBody(block.Body())
+	sig.writeElementsToBody(block.Body())
 
 	return block
 }
 
 // BuildTokens builds the block signature as `hclwrite.Tokens`.
-func (s *BlockSignature) BuildTokens() (tks hclwrite.Tokens) {
-	if block := s.Build(); block != nil {
+func (sig *BlockSignature) BuildTokens() hclwrite.Tokens {
+	tks := hclwrite.Tokens{}
+
+	if block := sig.Build(); block != nil {
 		blockTks := block.BuildTokens(nil)
 		// Remove trailing new line automatically added (=remove last token)
 		tks = append(hclwrite.Tokens{}, blockTks[0:len(blockTks)-1]...)
@@ -106,17 +108,18 @@ func (s *BlockSignature) BuildTokens() (tks hclwrite.Tokens) {
 // writeElementsToBody writes all block signature elements to the provided `hclwrite.Body`
 //
 // It takes care of attribute values containing `hclwrite.Tokens` encapsulated into a cty capsule.
-func (s *BlockSignature) writeElementsToBody(body *hclwrite.Body) {
-	for _, value := range s.GetElements() {
-		if value.IsBodyBlock() {
+func (sig *BlockSignature) writeElementsToBody(body *hclwrite.Body) {
+	for _, value := range sig.GetElements() {
+		switch {
+		case value.IsBodyBlock():
 			body.AppendBlock(value.Build())
-		} else if value.IsBodyAttribute() {
+		case value.IsBodyAttribute():
 			if tokens.ContainsCapsule(value.attr) {
 				body.SetAttributeRaw(value.GetName(), tokens.Generate(value.attr))
 			} else {
 				body.SetAttributeValue(value.GetName(), *value.attr)
 			}
-		} else if value.IsBodyEmptyLine() {
+		case value.IsBodyEmptyLine():
 			body.AppendNewline()
 		}
 	}

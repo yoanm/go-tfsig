@@ -1,15 +1,17 @@
-package tfsig
+package tfsig_test
 
 import (
 	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/zclconf/go-cty/cty"
+
+	"github.com/yoanm/go-tfsig"
 )
 
 func Example() {
 	// Create a resource block
-	sig := NewEmptyResource("res_name", "res_id")
+	sig := tfsig.NewEmptyResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 	sig.AppendEmptyLine()
 	sig.AppendAttribute("attribute2", cty.BoolVal(true))
@@ -32,7 +34,7 @@ func Example() {
 
 func Example_enhance_existing() {
 	// Enhance an existing signature
-	sig := NewEmptyResource("res_name", "res_id")
+	sig := tfsig.NewEmptyResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 	sig.AppendEmptyLine()
 	sig.AppendAttribute("attribute2", cty.BoolVal(true))
@@ -41,17 +43,19 @@ func Example_enhance_existing() {
 
 	// ... Later in the code
 	// Enhance signature by removing empty lines and add an attribute below attribute2
-	newElems := BodyElements{}
-	for _, v := range sig.GetElements() {
+	newElems := tfsig.BodyElements{}
+
+	for _, elem := range sig.GetElements() {
 		// Remove all empty lines
-		if !v.IsBodyEmptyLine() {
-			newElems = append(newElems, v)
+		if !elem.IsBodyEmptyLine() {
+			newElems = append(newElems, elem)
 		}
 		// Append a new attribute right after attribute2
-		if v.GetName() == "attribute2" {
-			newElems = append(newElems, NewBodyAttribute("attribute22", cty.BoolVal(false)))
+		if elem.GetName() == "attribute2" {
+			newElems = append(newElems, tfsig.NewBodyAttribute("attribute22", cty.BoolVal(false)))
 		}
 	}
+
 	sig.SetElements(newElems)
 
 	// ... Finally
@@ -71,7 +75,7 @@ func Example_enhance_existing() {
 
 func Example_reorder() {
 	// Reorder an existing signature
-	sig := NewEmptyResource("res_name", "res_id")
+	sig := tfsig.NewEmptyResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 	sig.AppendAttribute("attribute2", cty.BoolVal(true))
 	sig.AppendAttribute("attribute3", cty.NumberFloatVal(-12.34))
@@ -81,20 +85,23 @@ func Example_reorder() {
 
 	// ... Later in the code
 	// Re-order elements and remove empty lines
-	newElems := make(BodyElements, len(sig.GetElements()))
+	newElems := make(tfsig.BodyElements, len(sig.GetElements()))
 	extraElemCont := 0
-	for _, v := range sig.GetElements() {
-		if v.GetName() == "attribute1" {
-			newElems[2] = v
-		} else if v.GetName() == "attribute4" {
-			newElems[1] = v
-		} else if v.GetName() == "attribute3" {
-			newElems[0] = v
-		} else if !v.IsBodyEmptyLine() {
-			newElems[3+extraElemCont] = v
+
+	for _, elem := range sig.GetElements() {
+		switch {
+		case elem.GetName() == "attribute1":
+			newElems[2] = elem
+		case elem.GetName() == "attribute4":
+			newElems[1] = elem
+		case elem.GetName() == "attribute3":
+			newElems[0] = elem
+		case !elem.IsBodyEmptyLine():
+			newElems[3+extraElemCont] = elem
 			extraElemCont++
 		}
 	}
+
 	sig.SetElements(newElems)
 
 	hclFile := hclwrite.NewEmptyFile()

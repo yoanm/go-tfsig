@@ -1,4 +1,4 @@
-package tfsig
+package tfsig_test
 
 import (
 	"fmt"
@@ -6,10 +6,13 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
+	"github.com/yoanm/go-tfsig"
 	"github.com/yoanm/go-tfsig/testutils"
 )
 
 func TestNewValueGenerator(t *testing.T) {
+	t.Parallel()
+
 	basicStringValue := "basic_value"
 	customStringValue := "custom.my_var"
 	localVal := "local.my_local"
@@ -20,39 +23,43 @@ func TestNewValueGenerator(t *testing.T) {
 	listVal := []string{basicStringValue, customStringValue, localVal, varVal, dataVal}
 
 	cases := map[string]struct {
-		value      ValueGenerator
+		value      tfsig.ValueGenerator
 		goldenFile string
 	}{
 		"Default": {
-			NewValueGenerator(),
+			tfsig.NewValueGenerator(),
 			"ValueGenerator.default",
 		},
 		"Enhanced": {
-			NewValueGenerator("custom."),
+			tfsig.NewValueGenerator("custom."),
 			"ValueGenerator.custom",
 		},
 	}
 
-	for tcname, tc := range cases {
+	for tcname, tcase := range cases {
+		tcase := tcase // For parallel execution
+
 		t.Run(
 			tcname,
 			func(t *testing.T) {
-				sig := NewSignature(
+				t.Parallel()
+
+				sig := tfsig.NewSignature(
 					"sig",
 					nil,
-					BodyElements{
-						NewBodyAttribute("basic", *tc.value.ToString(&basicStringValue)),
-						NewBodyAttribute("custom", *tc.value.ToString(&customStringValue)),
-						NewBodyAttribute("local", *tc.value.ToString(&localVal)),
-						NewBodyAttribute("var", *tc.value.ToString(&varVal)),
-						NewBodyAttribute("data", *tc.value.ToString(&dataVal)),
-						NewBodyAttribute("bool", *tc.value.ToBool(&boolVal)),
-						NewBodyAttribute("number", *tc.value.ToNumber(&intVal)),
-						NewBodyAttribute("list_of_string", *tc.value.ToStringList(&listVal)),
+					tfsig.BodyElements{
+						tfsig.NewBodyAttribute("basic", *tcase.value.ToString(&basicStringValue)),
+						tfsig.NewBodyAttribute("custom", *tcase.value.ToString(&customStringValue)),
+						tfsig.NewBodyAttribute("local", *tcase.value.ToString(&localVal)),
+						tfsig.NewBodyAttribute("var", *tcase.value.ToString(&varVal)),
+						tfsig.NewBodyAttribute("data", *tcase.value.ToString(&dataVal)),
+						tfsig.NewBodyAttribute("bool", *tcase.value.ToBool(&boolVal)),
+						tfsig.NewBodyAttribute("number", *tcase.value.ToNumber(&intVal)),
+						tfsig.NewBodyAttribute("list_of_string", *tcase.value.ToStringList(&listVal)),
 					},
 				)
-				if err := testutils.EnsureBlockFileEqualsGoldenFile(sig.Build(), tc.goldenFile); err != nil {
-					t.Errorf("Case \"%s\": %v", tcname, err)
+				if err := testutils.EnsureBlockFileEqualsGoldenFile(sig.Build(), tcase.goldenFile); err != nil {
+					t.Errorf("Case \"%s\": %v", t.Name(), err)
 				}
 			},
 		)
@@ -60,7 +67,9 @@ func TestNewValueGenerator(t *testing.T) {
 }
 
 func TestValueGenerator_nil(t *testing.T) {
-	valGen := NewValueGenerator()
+	t.Parallel()
+
+	valGen := tfsig.NewValueGenerator()
 	cases := map[string]struct {
 		fn func() *cty.Value
 	}{
@@ -91,12 +100,16 @@ func TestValueGenerator_nil(t *testing.T) {
 		},
 	}
 
-	for tcname, tc := range cases {
+	for tcname, tcase := range cases {
+		tcase := tcase // For parallel execution
+
 		t.Run(
 			tcname,
 			func(t *testing.T) {
-				if actual := tc.fn(); actual != nil {
-					t.Errorf("wrong result for case %q: expected nil, got %v", tcname, actual)
+				t.Parallel()
+
+				if actual := tcase.fn(); actual != nil {
+					t.Errorf("wrong result for case %q: expected nil, got %v", t.Name(), actual)
 				}
 			},
 		)
@@ -104,7 +117,9 @@ func TestValueGenerator_nil(t *testing.T) {
 }
 
 func TestValueGenerator_panic(t *testing.T) {
-	valGen := NewValueGenerator()
+	t.Parallel()
+
+	valGen := tfsig.NewValueGenerator()
 	val := "a_value"
 	ctyType := cty.Map(cty.String)
 	expectedError := fmt.Sprintf("Unable to convert \"%s\" to a %s", val, ctyType.FriendlyName())
@@ -120,14 +135,18 @@ func TestValueGenerator_panic(t *testing.T) {
 }
 
 func TestToIdent_nil(t *testing.T) {
-	valGen := NewValueGenerator()
+	t.Parallel()
+
+	valGen := tfsig.NewValueGenerator()
 	if actual := valGen.ToIdent(nil); actual != nil {
 		t.Errorf("wrong result: expected nil, got %v", actual)
 	}
 }
 
 func TestToIdentList_nil(t *testing.T) {
-	valGen := NewValueGenerator()
+	t.Parallel()
+
+	valGen := tfsig.NewValueGenerator()
 	if actual := valGen.ToIdentList(nil); actual != nil {
 		t.Errorf("wrong result: expected nil, got %v", actual)
 	}

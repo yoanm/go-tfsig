@@ -4,19 +4,17 @@ import (
 	"strings"
 )
 
-var defaultUnescapedStringPrefixList []string
-
-func init() {
-	defaultUnescapedStringPrefixList = []string{
-		// Common terraform prefix for unescaped strings - START
-		"local.",
-		"var.",
-		"data.",
-		// Common terraform prefix for unescaped strings - END
-	}
+//nolint:gochecknoglobals // Better to keep it as **internal** global var than define it each time
+var defaultUnescapedStringPrefixList = []string{
+	// Common terraform prefix for unescaped strings - START
+	"local.",
+	"var.",
+	"data.",
+	// Common terraform prefix for unescaped strings - END
 }
 
-// NewIdentTokenMatcher returns an instance of IdentTokenMatcher with provided list of prefix to consider as 'ident' tokens
+// NewIdentTokenMatcher returns an instance of IdentTokenMatcher with provided list of prefix to
+// consider as 'ident' tokens
 //
 // `local.`, `var.` and `data.` tokens will be considered as 'ident' tokens by default.
 func NewIdentTokenMatcher(prefixList ...string) IdentTokenMatcher {
@@ -31,7 +29,6 @@ type IdentTokenMatcherInterface interface {
 // IdentTokenMatcher is a simple implementation for IdentTokenMatcherInterface.
 type IdentTokenMatcher struct {
 	prefixList []string
-	IdentTokenMatcherInterface
 }
 
 // IsIdentToken is the implementation for IdentTokenMatcherInterface.

@@ -1,9 +1,11 @@
-package tfsig
+package tfsig_test
 
 import (
 	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hclwrite"
+
+	"github.com/yoanm/go-tfsig"
 )
 
 func ExampleValueGenerator() {
@@ -15,8 +17,8 @@ func ExampleValueGenerator() {
 	identStringValue := "explicit_ident.foo"
 	identListStringValue := []string{"explicit_ident_item.foo", "explicit_ident_item.bar"}
 
-	valGen := NewValueGenerator()
-	sig := NewEmptySignature("my_block")
+	valGen := tfsig.NewValueGenerator()
+	sig := tfsig.NewEmptySignature("my_block")
 	sig.AppendAttribute("attr1", *valGen.ToString(&basicStringValue))
 	sig.AppendAttribute("attr2", *valGen.ToString(&localVal))
 	sig.AppendAttribute("attr3", *valGen.ToString(&varVal))
@@ -25,7 +27,9 @@ func ExampleValueGenerator() {
 	sig.AppendEmptyLine()
 	sig.AppendAttribute("attr6", *valGen.ToIdent(&identStringValue))
 	sig.AppendAttribute("attr7", *valGen.ToIdentList(&identListStringValue))
-	customValGen := NewValueGenerator("custom.")
+
+	customValGen := tfsig.NewValueGenerator("custom.")
+
 	sig.AppendEmptyLine()
 	sig.AppendAttribute("attr8", *customValGen.ToString(&customStringValue))
 

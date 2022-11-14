@@ -6,7 +6,7 @@ It provides ability to generate block signature which are way easier to manipula
 
 ## Functions
 
-### func [AppendBlockIfNotNil](/utils.go#L26)
+### func [AppendBlockIfNotNil](/utils.go#L22)
 
 `func AppendBlockIfNotNil(body *hclwrite.Body, block *hclwrite.Block)`
 
@@ -21,14 +21,14 @@ evenFn := func(i int) *hclwrite.Block {
         return nil
     }
 
-    return NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
+    return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
 }
 
-AppendBlockIfNotNil(hclFile.Body(), evenFn(0))
-AppendBlockIfNotNil(hclFile.Body(), evenFn(1))
-AppendBlockIfNotNil(hclFile.Body(), evenFn(2))
-AppendBlockIfNotNil(hclFile.Body(), evenFn(3))
-AppendBlockIfNotNil(hclFile.Body(), evenFn(4))
+tfsig.AppendBlockIfNotNil(hclFile.Body(), evenFn(0))
+tfsig.AppendBlockIfNotNil(hclFile.Body(), evenFn(1))
+tfsig.AppendBlockIfNotNil(hclFile.Body(), evenFn(2))
+tfsig.AppendBlockIfNotNil(hclFile.Body(), evenFn(3))
+tfsig.AppendBlockIfNotNil(hclFile.Body(), evenFn(4))
 
 fmt.Println(string(hclFile.Bytes()))
 ```
@@ -42,11 +42,12 @@ block3 {
 }
 ```
 
-### func [AppendNewLineAndBlockIfNotNil](/utils.go#L35)
+### func [AppendNewLineAndBlockIfNotNil](/utils.go#L32)
 
 `func AppendNewLineAndBlockIfNotNil(body *hclwrite.Body, block *hclwrite.Block)`
 
-AppendNewLineAndBlockIfNotNil appends an empty line followed by provided block to the provided body only if block is not nil
+AppendNewLineAndBlockIfNotNil appends an empty line followed by provided block to the provided body
+only if block is not nil
 
 It simply avoids an `if` in your code.
 
@@ -57,14 +58,14 @@ oddFn := func(i int) *hclwrite.Block {
         return nil
     }
 
-    return NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
+    return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
 }
 
-AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(0))
-AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(1))
-AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(2))
-AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(3))
-AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(4))
+tfsig.AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(0))
+tfsig.AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(1))
+tfsig.AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(2))
+tfsig.AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(3))
+tfsig.AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(4))
 
 fmt.Println(string(hclFile.Bytes()))
 ```
@@ -82,7 +83,7 @@ block4 {
 }
 ```
 
-### func [ToTerraformIdentifier](/utils.go#L45)
+### func [ToTerraformIdentifier](/utils.go#L42)
 
 `func ToTerraformIdentifier(s string) string`
 
@@ -91,10 +92,10 @@ ToTerraformIdentifier converts a string to a terraform identifier, by converting
 And if provided value starts with a character not allowed as first character, it replaces it by `_`.
 
 ```golang
-fmt.Printf("a_valid-identifier becomes %s\n", ToTerraformIdentifier("a_valid-identifier"))
-fmt.Printf(".github becomes %s\n", ToTerraformIdentifier(".github"))
-fmt.Printf("an.identifier becomes %s\n", ToTerraformIdentifier("an.identifier"))
-fmt.Printf("0id becomes %s\n", ToTerraformIdentifier("0id"))
+fmt.Printf("a_valid-identifier becomes %s\n", tfsig.ToTerraformIdentifier("a_valid-identifier"))
+fmt.Printf(".github becomes %s\n", tfsig.ToTerraformIdentifier(".github"))
+fmt.Printf("an.identifier becomes %s\n", tfsig.ToTerraformIdentifier("an.identifier"))
+fmt.Printf("0id becomes %s\n", tfsig.ToTerraformIdentifier("0id"))
 ```
 
  Output:
@@ -115,6 +116,82 @@ an.identifier becomes an-identifier
 BlockSignature is basically a wrapper to HCL blocks
 It holds a type, the block labels and its elements.
 
+### AppendAttributeIfNotNil
+
+```golang
+hclFile := hclwrite.NewEmptyFile()
+evenFn := func(i int) *cty.Value {
+    if i%2 == 0 {
+        return nil
+    }
+
+    val := cty.StringVal(fmt.Sprintf("val%d", i))
+
+    return &val
+}
+
+sig := tfsig.NewEmptyResource("my_res", "res_id")
+
+sig.AppendAttributeIfNotNil("attr_0", evenFn(0))
+sig.AppendAttributeIfNotNil("attr_1", evenFn(1))
+sig.AppendAttributeIfNotNil("attr_2", evenFn(2))
+sig.AppendAttributeIfNotNil("attr_3", evenFn(3))
+sig.AppendAttributeIfNotNil("attr_4", evenFn(4))
+
+hclFile.Body().AppendBlock(sig.Build())
+
+fmt.Println(string(hclFile.Bytes()))
+```
+
+ Output:
+
+```terraform
+resource "my_res" "res_id" {
+  attr_1 = "val1"
+  attr_3 = "val3"
+}
+```
+
+### AppendChildIfNotNil
+
+```golang
+hclFile := hclwrite.NewEmptyFile()
+oddFn := func(i int) *tfsig.BlockSignature {
+    if i%2 != 0 {
+        return nil
+    }
+
+    return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i))
+}
+
+sig := tfsig.NewEmptyResource("my_res", "res_id")
+
+sig.AppendChildIfNotNil(oddFn(0))
+sig.AppendChildIfNotNil(oddFn(1))
+sig.AppendChildIfNotNil(oddFn(2))
+sig.AppendChildIfNotNil(oddFn(3))
+sig.AppendChildIfNotNil(oddFn(4))
+
+hclFile.Body().AppendBlock(sig.Build())
+
+fmt.Println(string(hclFile.Bytes()))
+```
+
+ Output:
+
+```terraform
+resource "my_res" "res_id" {
+  block0 {
+  }
+
+  block2 {
+  }
+
+  block4 {
+  }
+}
+```
+
 #### func [NewEmptyResource](/block_signature.go#L32)
 
 `func NewEmptyResource(name, id string, labels ...string) *BlockSignature`
@@ -133,29 +210,29 @@ NewEmptySignature returns a BlockSignature pointer filled with provided labels.
 
 NewSignature returns a BlockSignature pointer filled with provided labels and elements.
 
-#### func (*BlockSignature) [AppendAttrIfNotNil](/block_signature_extra.go#L14)
+#### func (*BlockSignature) [AppendAttribute](/block_signature.go#L70)
 
-`func (s *BlockSignature) AppendAttrIfNotNil(attrName string, v *cty.Value)`
+`func (sig *BlockSignature) AppendAttribute(name string, value cty.Value)`
+
+AppendAttribute appends an attribute to the block.
+
+#### func (*BlockSignature) [AppendAttributeIfNotNil](/block_signature_extra.go#L12)
+
+`func (sig *BlockSignature) AppendAttributeIfNotNil(attrName string, v *cty.Value)`
 
 AppendAttrIfNotNil appends the provided attribute only if not nil
 
 It simply avoids an `if` in your code.
 
-#### func (*BlockSignature) [AppendAttribute](/block_signature.go#L70)
-
-`func (s *BlockSignature) AppendAttribute(name string, value cty.Value)`
-
-AppendAttribute appends an attribute to the block.
-
 #### func (*BlockSignature) [AppendChild](/block_signature.go#L75)
 
-`func (s *BlockSignature) AppendChild(child *BlockSignature)`
+`func (sig *BlockSignature) AppendChild(child *BlockSignature)`
 
 AppendChild appends a child block to the block.
 
-#### func (*BlockSignature) [AppendChildIfNotNil](/block_signature_extra.go#L24)
+#### func (*BlockSignature) [AppendChildIfNotNil](/block_signature_extra.go#L22)
 
-`func (s *BlockSignature) AppendChildIfNotNil(child *BlockSignature)`
+`func (sig *BlockSignature) AppendChildIfNotNil(child *BlockSignature)`
 
 AppendChildIfNotNil appends the provided child only if not nil. And in case there is existing elements,
 it prepends an empty line
@@ -164,37 +241,37 @@ It simply avoids an `if` in your code.
 
 #### func (*BlockSignature) [AppendElement](/block_signature.go#L65)
 
-`func (s *BlockSignature) AppendElement(element BodyElement)`
+`func (sig *BlockSignature) AppendElement(element BodyElement)`
 
 AppendElement appends an element to the block.
 
 #### func (*BlockSignature) [AppendEmptyLine](/block_signature.go#L80)
 
-`func (s *BlockSignature) AppendEmptyLine()`
+`func (sig *BlockSignature) AppendEmptyLine()`
 
 AppendEmptyLine appends an empty line to the block.
 
 #### func (*BlockSignature) [Build](/block_signature.go#L85)
 
-`func (s *BlockSignature) Build() *hclwrite.Block`
+`func (sig *BlockSignature) Build() *hclwrite.Block`
 
 Build creates a `hclwrite.Block` and appends block's elements to it.
 
 #### func (*BlockSignature) [BuildTokens](/block_signature.go#L94)
 
-`func (s *BlockSignature) BuildTokens() (tks hclwrite.Tokens)`
+`func (sig *BlockSignature) BuildTokens() hclwrite.Tokens`
 
 BuildTokens builds the block signature as `hclwrite.Tokens`.
 
-#### func (*BlockSignature) [DependsOn](/block_signature_extra.go#L35)
+#### func (*BlockSignature) [DependsOn](/block_signature_terraform_helpers.go#L12)
 
-`func (s *BlockSignature) DependsOn(idList []string)`
+`func (sig *BlockSignature) DependsOn(idList []string)`
 
 DependsOn adds an empty line and the 'depends_on' terraform directive with provided id list.
 
 ```golang
 // resource with 'depends_on' directive
-sig := NewEmptyResource("res_name", "res_id")
+sig := tfsig.NewEmptyResource("res_name", "res_id")
 sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 sig.DependsOn([]string{"another_res.res_id", "another_another_res.res_id"})
 
@@ -216,44 +293,50 @@ resource "res_name" "res_id" {
 
 #### func (*BlockSignature) [GetElements](/block_signature.go#L55)
 
-`func (s *BlockSignature) GetElements() BodyElements`
+`func (sig *BlockSignature) GetElements() BodyElements`
 
 GetElements returns all elements attached to the block.
 
 #### func (*BlockSignature) [GetLabels](/block_signature.go#L50)
 
-`func (s *BlockSignature) GetLabels() []string`
+`func (sig *BlockSignature) GetLabels() []string`
 
 GetLabels returns labels attached to the block.
 
 #### func (*BlockSignature) [GetType](/block_signature.go#L45)
 
-`func (s *BlockSignature) GetType() string`
+`func (sig *BlockSignature) GetType() string`
 
 GetType returns the type of the block.
 
-#### func (*BlockSignature) [Lifecycle](/block_signature_extra.go#L89)
+#### func (*BlockSignature) [Lifecycle](/block_signature_terraform_helpers.go#L67)
 
-`func (s *BlockSignature) Lifecycle(config LifecycleConfig)`
+`func (sig *BlockSignature) Lifecycle(config LifecycleConfig)`
 
 Lifecycle adds an empty line and the 'lifecycle' terraform directive and then append provided lifecycle attributes.
 
 ```golang
 // resource with 'lifecycle' directive
-sig := NewEmptyResource("res_name", "res_id")
+sig := tfsig.NewEmptyResource("res_name", "res_id")
 sig.AppendAttribute("attribute1", cty.StringVal("value1"))
-config := LifecycleConfig{}
+
+config := tfsig.LifecycleConfig{} //nolint:exhaustruct // deactivated as goal it to use helper methods instead
 config.SetCreateBeforeDestroy(true)
 config.SetPreventDestroy(false)
 sig.Lifecycle(config)
 
-sig2 := NewEmptyResource("res2_name", "res2_id")
+sig2 := tfsig.NewEmptyResource("res2_name", "res2_id")
 sig2.AppendAttribute("attribute1", cty.StringVal("value1"))
-config2 := LifecycleConfig{
-    IgnoreChanges: []string{"attribute1"},
-    Postcondition: &LifecycleCondition{
-        condition:    "res_name.res_id.attribute1 != \"value1\"",
-        errorMessage: "res_name.res_id.attribute1 must equal \"value1\"",
+
+config2 := tfsig.LifecycleConfig{
+    CreateBeforeDestroy: nil,
+    PreventDestroy:      nil,
+    IgnoreChanges:       []string{"attribute1"},
+    ReplaceTriggeredBy:  nil,
+    Precondition:        nil,
+    Postcondition: &tfsig.LifecycleCondition{
+        Condition:    "res_name.res_id.attribute1 != \"value1\"",
+        ErrorMessage: "res_name.res_id.attribute1 must equal \"value1\"",
     },
 }
 sig2.Lifecycle(config2)
@@ -291,7 +374,7 @@ resource "res2_name" "res2_id" {
 
 #### func (*BlockSignature) [SetElements](/block_signature.go#L60)
 
-`func (s *BlockSignature) SetElements(elements BodyElements)`
+`func (sig *BlockSignature) SetElements(elements BodyElements)`
 
 SetElements overrides existing elements by provided ones.
 
@@ -319,7 +402,7 @@ NewBodyBlock returns a Block BodyElement.
 
 NewBodyEmptyLine returns an empty line BodyElement.
 
-#### func (BodyElement) [Build](/body_element.go#L77)
+#### func (BodyElement) [Build](/body_element.go#L79)
 
 `func (e BodyElement) Build() *hclwrite.Block`
 
@@ -335,7 +418,7 @@ GetBodyAttribute returns the value of the attribute behind the BodyElement
 
 It panics if BodyElement is not an attribute (use `IsBodyAttribute()` first).
 
-#### func (BodyElement) [GetBodyBlock](/body_element.go#L67)
+#### func (BodyElement) [GetBodyBlock](/body_element.go#L68)
 
 `func (e BodyElement) GetBodyBlock() *BlockSignature`
 
@@ -373,51 +456,53 @@ IsBodyEmptyLine returns true if the BodyElement is an empty line.
 
 BodyElements is a simple wrapper for a list of BodyElement.
 
-### type [IdentTokenMatcher](/ident_token_matcher.go#L32)
+### type [IdentTokenMatcher](/ident_token_matcher.go#L30)
 
 `type IdentTokenMatcher struct { ... }`
 
 IdentTokenMatcher is a simple implementation for IdentTokenMatcherInterface.
 
-#### func [NewIdentTokenMatcher](/ident_token_matcher.go#L22)
+#### func [NewIdentTokenMatcher](/ident_token_matcher.go#L20)
 
 `func NewIdentTokenMatcher(prefixList ...string) IdentTokenMatcher`
 
-NewIdentTokenMatcher returns an instance of IdentTokenMatcher with provided list of prefix to consider as 'ident' tokens
+NewIdentTokenMatcher returns an instance of IdentTokenMatcher with provided list of prefix to
+consider as 'ident' tokens
 
 `local.`, `var.` and `data.` tokens will be considered as 'ident' tokens by default.
 
-#### func (IdentTokenMatcher) [IsIdentToken](/ident_token_matcher.go#L38)
+#### func (IdentTokenMatcher) [IsIdentToken](/ident_token_matcher.go#L35)
 
 `func (m IdentTokenMatcher) IsIdentToken(s string) bool`
 
 IsIdentToken is the implementation for IdentTokenMatcherInterface.
 
-### type [IdentTokenMatcherInterface](/ident_token_matcher.go#L27)
+### type [IdentTokenMatcherInterface](/ident_token_matcher.go#L25)
 
 `type IdentTokenMatcherInterface interface { ... }`
 
 IdentTokenMatcherInterface is a simple interface declaring required method to detect an 'ident' token.
 
-### type [LifecycleCondition](/block_signature_extra.go#L83)
+### type [LifecycleCondition](/block_signature_terraform_helpers.go#L61)
 
 `type LifecycleCondition struct { ... }`
 
 LifecycleCondition is used for Precondition and Postcondition property of LifecycleConfig
 It's basically a wrapper for terraform lifecycle pre- and post-conditions.
 
-### type [LifecycleConfig](/block_signature_extra.go#L42)
+### type [LifecycleConfig](/block_signature_terraform_helpers.go#L19)
 
 `type LifecycleConfig struct { ... }`
 
 LifecycleConfig is used as argument for `Lifecycle()` method
 It's basically a wrapper for terraform `lifecycle` directive.
 
-#### func (*LifecycleConfig) [SetCreateBeforeDestroy](/block_signature_extra.go#L62)
+#### func (*LifecycleConfig) [SetCreateBeforeDestroy](/block_signature_terraform_helpers.go#L40)
 
 `func (c *LifecycleConfig) SetCreateBeforeDestroy(b bool)`
 
-SetCreateBeforeDestroy is a simple helper to avoid having to create a boolean variable and then pass the pointer to it
+SetCreateBeforeDestroy is a simple helper to avoid having to create a boolean variable
+and then pass the pointer to it
 
 E.g: instead of writing
 
@@ -433,7 +518,7 @@ config := LifecycleConfig{}
 config.SetCreateBeforeDestroy(true)
 ```
 
-#### func (*LifecycleConfig) [SetPreventDestroy](/block_signature_extra.go#L77)
+#### func (*LifecycleConfig) [SetPreventDestroy](/block_signature_terraform_helpers.go#L55)
 
 `func (c *LifecycleConfig) SetPreventDestroy(b bool)`
 
@@ -470,8 +555,8 @@ customStringValue := "custom.my_var"
 identStringValue := "explicit_ident.foo"
 identListStringValue := []string{"explicit_ident_item.foo", "explicit_ident_item.bar"}
 
-valGen := NewValueGenerator()
-sig := NewEmptySignature("my_block")
+valGen := tfsig.NewValueGenerator()
+sig := tfsig.NewEmptySignature("my_block")
 sig.AppendAttribute("attr1", *valGen.ToString(&basicStringValue))
 sig.AppendAttribute("attr2", *valGen.ToString(&localVal))
 sig.AppendAttribute("attr3", *valGen.ToString(&varVal))
@@ -480,7 +565,9 @@ sig.AppendAttribute("attr5", *valGen.ToString(&customStringValue))
 sig.AppendEmptyLine()
 sig.AppendAttribute("attr6", *valGen.ToIdent(&identStringValue))
 sig.AppendAttribute("attr7", *valGen.ToIdentList(&identListStringValue))
-customValGen := NewValueGenerator("custom.")
+
+customValGen := tfsig.NewValueGenerator("custom.")
+
 sig.AppendEmptyLine()
 sig.AppendAttribute("attr8", *customValGen.ToString(&customStringValue))
 
@@ -519,9 +606,9 @@ of token to consider as 'ident' tokens.
 
 NewValueGeneratorWith returns a new ValueGenerator with the provided matcher.
 
-#### func (*ValueGenerator) [FromString](/value_generator.go#L88)
+#### func (*ValueGenerator) [FromString](/value_generator.go#L94)
 
-`func (g *ValueGenerator) FromString(s *string, t cty.Type) *cty.Value`
+`func (g *ValueGenerator) FromString(val *string, toType cty.Type) *cty.Value`
 
 FromString convert a string to `cty.Value` of the provided type
 If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`.
@@ -559,11 +646,12 @@ If the provided string is actually an 'ident' token, `cty.Value` will be a capsu
 ToString convert a string to `cty.Value` string which will be rendered as quoted string by terraform HCL
 If the provided string is actually an 'ident' token, `cty.Value` will be a capsule holding `hclwrite.tokens`.
 
-#### func (*ValueGenerator) [ToStringList](/value_generator.go#L68)
+#### func (*ValueGenerator) [ToStringList](/value_generator.go#L69)
 
 `func (g *ValueGenerator) ToStringList(list *[]string) *cty.Value`
 
-ToStringList convert a string list to `cty.Value` string list which will be rendered as quoted string list by terraform HCL
+ToStringList convert a string list to `cty.Value` string list which will be rendered as quoted string list
+by terraform HCL.
 If a provided string item is actually an 'ident' token, `cty.Value` item will be a capsule holding `hclwrite.tokens`.
 
 ## Sub Packages
@@ -576,7 +664,7 @@ If a provided string item is actually an 'ident' token, `cty.Value` item will be
 
 ```golang
 // Create a resource block
-sig := NewEmptyResource("res_name", "res_id")
+sig := tfsig.NewEmptyResource("res_name", "res_id")
 sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 sig.AppendEmptyLine()
 sig.AppendAttribute("attribute2", cty.BoolVal(true))
@@ -605,7 +693,7 @@ resource "res_name" "res_id" {
 
 ```golang
 // Reorder an existing signature
-sig := NewEmptyResource("res_name", "res_id")
+sig := tfsig.NewEmptyResource("res_name", "res_id")
 sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 sig.AppendAttribute("attribute2", cty.BoolVal(true))
 sig.AppendAttribute("attribute3", cty.NumberFloatVal(-12.34))
@@ -615,20 +703,23 @@ sig.AppendAttribute("attribute5", cty.StringVal("value5"))
 
 // ... Later in the code
 // Re-order elements and remove empty lines
-newElems := make(BodyElements, len(sig.GetElements()))
+newElems := make(tfsig.BodyElements, len(sig.GetElements()))
 extraElemCont := 0
-for _, v := range sig.GetElements() {
-    if v.GetName() == "attribute1" {
-        newElems[2] = v
-    } else if v.GetName() == "attribute4" {
-        newElems[1] = v
-    } else if v.GetName() == "attribute3" {
-        newElems[0] = v
-    } else if !v.IsBodyEmptyLine() {
-        newElems[3+extraElemCont] = v
+
+for _, elem := range sig.GetElements() {
+    switch {
+    case elem.GetName() == "attribute1":
+        newElems[2] = elem
+    case elem.GetName() == "attribute4":
+        newElems[1] = elem
+    case elem.GetName() == "attribute3":
+        newElems[0] = elem
+    case !elem.IsBodyEmptyLine():
+        newElems[3+extraElemCont] = elem
         extraElemCont++
     }
 }
+
 sig.SetElements(newElems)
 
 hclFile := hclwrite.NewEmptyFile()

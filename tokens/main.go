@@ -1,7 +1,8 @@
 /*
 Package tokens provides an easy way to create common hclwrite tokens (such as new line, comma, equal sign, ident)
 
-It also provides an easy way to encapsulate hclwrite tokens into a cty.Value and a function (`Generate()`) to manage those type of value
+It also provides an easy way to encapsulate hclwrite tokens into a cty.Value and a function (`Generate()`)
+to manage those type of value
 */
 package tokens
 
@@ -16,16 +17,15 @@ import (
 
 const (
 	// HclwriteTokensCtyTypeName is the friendly cty name for the capsule encapsulating `hclwrite.Tokens`.
+	//nolint:gosec // disabled as linter thinks it's an hardcoded credential
 	HclwriteTokensCtyTypeName = "cty.CapsuleVal(hclwrite.Tokens)"
 )
 
-var hclwriteTokensCtyType cty.Type
+//nolint:gochecknoglobals // disabled as I don't see any other way to share it between two functions below
+var hclwriteTokensCtyType = cty.Capsule(HclwriteTokensCtyTypeName, reflect.TypeOf(hclwrite.Tokens{}))
 
-func init() {
-	hclwriteTokensCtyType = cty.Capsule(HclwriteTokensCtyTypeName, reflect.TypeOf(hclwrite.Tokens{}))
-}
-
-// NewIdentValue takes a string which should be considered as 'ident' token and converts it to a special `cty.Value` capsule.
+// NewIdentValue takes a string which should be considered as 'ident' token and converts it
+// to a special `cty.Value` capsule.
 func NewIdentValue(s string) *cty.Value {
 	val := ToValue(NewIdentTokens(s))
 
@@ -39,8 +39,9 @@ func NewIdentListValue(list []string) *cty.Value {
 		return nil
 	}
 
-	listLength := len(list)
 	val := cty.ListValEmpty(hclwriteTokensCtyType)
+
+	listLength := len(list)
 	if listLength > 0 {
 		newList := make([]cty.Value, listLength)
 		for i, s := range list {
@@ -61,7 +62,8 @@ func ToValue(tokens hclwrite.Tokens) cty.Value {
 // FromValue takes a `cty.Value` and extract the `hclwrite.Tokens` from it.
 //
 // It panics if the provided value is not a special `cty.Value` capsule.
-func FromValue(v cty.Value) (newTokens hclwrite.Tokens) {
+func FromValue(v cty.Value) hclwrite.Tokens {
+	newTokens := hclwrite.Tokens{}
 	if err := gocty.FromCtyValue(v, &newTokens); err != nil {
 		panic(fmt.Sprintf("error during conversion from cty.Value to hclwrite.Tokens: %s", err))
 	}

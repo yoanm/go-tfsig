@@ -1,19 +1,21 @@
-package tokens
+package tokens_test
 
 import (
 	"fmt"
 
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
+
+	"github.com/yoanm/go-tfsig/tokens"
 )
 
 func ExampleGenerate() {
 	listOfCapsule, err := gocty.ToCtyValue(
 		[]cty.Value{
-			*NewIdentValue("value1"),
-			*NewIdentValue("value2"),
+			*tokens.NewIdentValue("value1"),
+			*tokens.NewIdentValue("value2"),
 		},
-		cty.List(hclwriteTokensCtyType),
+		cty.List(cty.DynamicPseudoType),
 	)
 	if err != nil {
 		panic(err)
@@ -21,10 +23,10 @@ func ExampleGenerate() {
 
 	setOfCapsule, err := gocty.ToCtyValue(
 		[]cty.Value{
-			*NewIdentValue("value1"),
-			*NewIdentValue("value2"),
+			*tokens.NewIdentValue("value1"),
+			*tokens.NewIdentValue("value2"),
 		},
-		cty.Set(hclwriteTokensCtyType),
+		cty.Set(cty.DynamicPseudoType),
 	)
 	if err != nil {
 		panic(err)
@@ -32,12 +34,12 @@ func ExampleGenerate() {
 
 	objectWithCapsule, err := gocty.ToCtyValue(
 		map[string]cty.Value{
-			"A": *NewIdentValue("A_value"),
+			"A": *tokens.NewIdentValue("A_value"),
 			"B": cty.StringVal("B_value"),
 		},
 		cty.Object(
 			map[string]cty.Type{
-				"A": hclwriteTokensCtyType,
+				"A": cty.DynamicPseudoType,
 				"B": cty.String,
 			},
 		),
@@ -48,10 +50,10 @@ func ExampleGenerate() {
 
 	mapOfCapsule, err := gocty.ToCtyValue(
 		map[string]cty.Value{
-			"A": *NewIdentValue("A_value"),
-			"B": *NewIdentValue("B_value"),
+			"A": *tokens.NewIdentValue("A_value"),
+			"B": *tokens.NewIdentValue("B_value"),
 		},
-		cty.Map(hclwriteTokensCtyType),
+		cty.Map(cty.DynamicPseudoType),
 	)
 	if err != nil {
 		panic(err)
@@ -60,30 +62,31 @@ func ExampleGenerate() {
 	tupleWithCapsule, err := gocty.ToCtyValue(
 		[]cty.Value{
 			cty.StringVal("A_value"),
-			*NewIdentValue("B_value"),
+			*tokens.NewIdentValue("B_value"),
 			cty.NumberIntVal(2),
 		},
-		cty.Tuple([]cty.Type{cty.String, hclwriteTokensCtyType, cty.Number}),
+		cty.Tuple([]cty.Type{cty.String, cty.DynamicPseudoType, cty.Number}),
 	)
 	if err != nil {
 		panic(err)
 	}
+
 	stringVal := cty.StringVal("TeSt")
 	numberIntVal := cty.NumberIntVal(12)
 	numberFloatVal := cty.NumberFloatVal(-12.23)
 	boolVal := cty.BoolVal(false)
 
-	fmt.Printf("Null: %#v\n", string(Generate(&cty.NilVal).Bytes()))
-	fmt.Printf("Ident: %#v\n", string(Generate(NewIdentValue("TeSt")).Bytes()))
-	fmt.Printf("String: %#v\n", string(Generate(&stringVal).Bytes()))
-	fmt.Printf("Positive number: %#v\n", string(Generate(&numberIntVal).Bytes()))
-	fmt.Printf("Negative number: %#v\n", string(Generate(&numberFloatVal).Bytes()))
-	fmt.Printf("Boolean: %#v\n", string(Generate(&boolVal).Bytes()))
-	fmt.Printf("List of capsule: %#v\n", string(Generate(&listOfCapsule).Bytes()))
-	fmt.Printf("Set of capsule: %#v\n", string(Generate(&setOfCapsule).Bytes()))
-	fmt.Printf("Object with capsule: %#v\n", string(Generate(&objectWithCapsule).Bytes()))
-	fmt.Printf("Map of capsule: %#v\n", string(Generate(&mapOfCapsule).Bytes()))
-	fmt.Printf("Tuple with capsule: %#v\n", string(Generate(&tupleWithCapsule).Bytes()))
+	fmt.Printf("Null: %#v\n", string(tokens.Generate(&cty.NilVal).Bytes()))
+	fmt.Printf("Ident: %#v\n", string(tokens.Generate(tokens.NewIdentValue("TeSt")).Bytes()))
+	fmt.Printf("String: %#v\n", string(tokens.Generate(&stringVal).Bytes()))
+	fmt.Printf("Positive number: %#v\n", string(tokens.Generate(&numberIntVal).Bytes()))
+	fmt.Printf("Negative number: %#v\n", string(tokens.Generate(&numberFloatVal).Bytes()))
+	fmt.Printf("Boolean: %#v\n", string(tokens.Generate(&boolVal).Bytes()))
+	fmt.Printf("List of capsule: %#v\n", string(tokens.Generate(&listOfCapsule).Bytes()))
+	fmt.Printf("Set of capsule: %#v\n", string(tokens.Generate(&setOfCapsule).Bytes()))
+	fmt.Printf("Object with capsule: %#v\n", string(tokens.Generate(&objectWithCapsule).Bytes()))
+	fmt.Printf("Map of capsule: %#v\n", string(tokens.Generate(&mapOfCapsule).Bytes()))
+	fmt.Printf("Tuple with capsule: %#v\n", string(tokens.Generate(&tupleWithCapsule).Bytes()))
 
 	// Output:
 	// Null: "null"
@@ -160,35 +163,39 @@ func ExampleSplitIterable() {
 		panic(err)
 	}
 
-	start, elements, end := SplitIterable(list)
+	start, elements, end := tokens.SplitIterable(list)
 	fmt.Printf(
 		"List:\n\tStart: %#v\n\tElements: %#v\n\tEnd: %#v\n",
 		string(start.Bytes()),
 		string(elements.Bytes()),
 		string(end.Bytes()),
 	)
-	start, elements, end = SplitIterable(setOfCapsule)
+
+	start, elements, end = tokens.SplitIterable(setOfCapsule)
 	fmt.Printf(
 		"Set:\n\tStart: %#v\n\tElements: %#v\n\tEnd: %#v\n",
 		string(start.Bytes()),
 		string(elements.Bytes()),
 		string(end.Bytes()),
 	)
-	start, elements, end = SplitIterable(objectWithCapsule)
+
+	start, elements, end = tokens.SplitIterable(objectWithCapsule)
 	fmt.Printf(
 		"Object:\n\tStart: %#v\n\tElements: %#v\n\tEnd: %#v\n",
 		string(start.Bytes()),
 		string(elements.Bytes()),
 		string(end.Bytes()),
 	)
-	start, elements, end = SplitIterable(mapOfCapsule)
+
+	start, elements, end = tokens.SplitIterable(mapOfCapsule)
 	fmt.Printf(
 		"Map:\n\tStart: %#v\n\tElements: %#v\n\tEnd: %#v\n",
 		string(start.Bytes()),
 		string(elements.Bytes()),
 		string(end.Bytes()),
 	)
-	start, elements, end = SplitIterable(tupleWithCapsule)
+
+	start, elements, end = tokens.SplitIterable(tupleWithCapsule)
 	fmt.Printf(
 		"Tuple:\n\tStart: %#v\n\tElements: %#v\n\tEnd: %#v\n",
 		string(start.Bytes()),

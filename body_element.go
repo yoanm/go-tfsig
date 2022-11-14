@@ -7,17 +7,17 @@ import (
 
 // NewBodyBlock returns a Block BodyElement.
 func NewBodyBlock(block *BlockSignature) BodyElement {
-	return BodyElement{name: block.GetType(), block: block, attr: nil, isEmptyLine: false}
+	return BodyElement{name: block.GetType(), block: block, isEmptyLine: false, attr: nil}
 }
 
 // NewBodyAttribute returns an Attribute BodyElement.
 func NewBodyAttribute(name string, attr cty.Value) BodyElement {
-	return BodyElement{name: name, attr: &attr, isEmptyLine: false}
+	return BodyElement{name: name, attr: &attr, isEmptyLine: false, block: nil}
 }
 
 // NewBodyEmptyLine returns an empty line BodyElement.
 func NewBodyEmptyLine() BodyElement {
-	return BodyElement{name: "empty_line", block: nil, attr: nil, isEmptyLine: true}
+	return BodyElement{name: "empty_line", isEmptyLine: true, block: nil, attr: nil}
 }
 
 // BodyElement is a wrapper for more or less anything that can be appended to a BlockSignature.
@@ -58,6 +58,7 @@ func (e BodyElement) GetBodyAttribute() *cty.Value {
 	if !e.IsBodyAttribute() {
 		panic("element is not a body attribute")
 	}
+
 	return e.attr
 }
 
@@ -68,6 +69,7 @@ func (e BodyElement) GetBodyBlock() *BlockSignature {
 	if !e.IsBodyBlock() {
 		panic("element is not a body block")
 	}
+
 	return e.block
 }
 

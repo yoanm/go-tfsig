@@ -1,73 +1,74 @@
-package tfsig
+package tfsig_test
 
 import (
 	"fmt"
 
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/zclconf/go-cty/cty"
+
+	"github.com/yoanm/go-tfsig"
 )
 
-func ExampleBlockSignature_DependsOn() {
-	// resource with 'depends_on' directive
-	sig := NewEmptyResource("res_name", "res_id")
-	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
-	sig.DependsOn([]string{"another_res.res_id", "another_another_res.res_id"})
-
+func ExampleBlockSignature_appendAttributeIfNotNil() {
 	hclFile := hclwrite.NewEmptyFile()
+	evenFn := func(i int) *cty.Value {
+		if i%2 == 0 {
+			return nil
+		}
+
+		val := cty.StringVal(fmt.Sprintf("val%d", i))
+
+		return &val
+	}
+
+	sig := tfsig.NewEmptyResource("my_res", "res_id")
+
+	sig.AppendAttributeIfNotNil("attr_0", evenFn(0))
+	sig.AppendAttributeIfNotNil("attr_1", evenFn(1))
+	sig.AppendAttributeIfNotNil("attr_2", evenFn(2))
+	sig.AppendAttributeIfNotNil("attr_3", evenFn(3))
+	sig.AppendAttributeIfNotNil("attr_4", evenFn(4))
+
 	hclFile.Body().AppendBlock(sig.Build())
 
 	fmt.Println(string(hclFile.Bytes()))
 	// Output:
-	// resource "res_name" "res_id" {
-	//   attribute1 = "value1"
-	//
-	//   depends_on = [another_res.res_id, another_another_res.res_id]
+	// resource "my_res" "res_id" {
+	//   attr_1 = "val1"
+	//   attr_3 = "val3"
 	// }
 }
 
-func ExampleBlockSignature_Lifecycle() {
-	// resource with 'lifecycle' directive
-	sig := NewEmptyResource("res_name", "res_id")
-	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
-	config := LifecycleConfig{}
-	config.SetCreateBeforeDestroy(true)
-	config.SetPreventDestroy(false)
-	sig.Lifecycle(config)
-
-	sig2 := NewEmptyResource("res2_name", "res2_id")
-	sig2.AppendAttribute("attribute1", cty.StringVal("value1"))
-	config2 := LifecycleConfig{
-		IgnoreChanges: []string{"attribute1"},
-		Postcondition: &LifecycleCondition{
-			condition:    "res_name.res_id.attribute1 != \"value1\"",
-			errorMessage: "res_name.res_id.attribute1 must equal \"value1\"",
-		},
-	}
-	sig2.Lifecycle(config2)
-
+func ExampleBlockSignature_appendChildIfNotNil() {
 	hclFile := hclwrite.NewEmptyFile()
+	oddFn := func(i int) *tfsig.BlockSignature {
+		if i%2 != 0 {
+			return nil
+		}
+
+		return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i))
+	}
+
+	sig := tfsig.NewEmptyResource("my_res", "res_id")
+
+	sig.AppendChildIfNotNil(oddFn(0))
+	sig.AppendChildIfNotNil(oddFn(1))
+	sig.AppendChildIfNotNil(oddFn(2))
+	sig.AppendChildIfNotNil(oddFn(3))
+	sig.AppendChildIfNotNil(oddFn(4))
+
 	hclFile.Body().AppendBlock(sig.Build())
-	hclFile.Body().AppendBlock(sig2.Build())
 
 	fmt.Println(string(hclFile.Bytes()))
 	// Output:
-	// resource "res_name" "res_id" {
-	//   attribute1 = "value1"
-	//
-	//   lifecycle {
-	//     create_before_destroy = true
-	//     prevent_destroy       = false
+	// resource "my_res" "res_id" {
+	//   block0 {
 	//   }
-	// }
-	// resource "res2_name" "res2_id" {
-	//   attribute1 = "value1"
 	//
-	//   lifecycle {
-	//     ignore_changes = [attribute1]
-	//     postcondition {
-	//       condition     = res_name.res_id.attribute1 != "value1"
-	//       error_message = "res_name.res_id.attribute1 must equal \"value1\""
-	//     }
+	//   block2 {
+	//   }
+	//
+	//   block4 {
 	//   }
 	// }
 }

@@ -1,4 +1,4 @@
-package tfsig
+package tfsig_test
 
 import (
 	"fmt"
@@ -7,27 +7,34 @@ import (
 
 	"github.com/zclconf/go-cty/cty"
 
+	"github.com/yoanm/go-tfsig"
 	"github.com/yoanm/go-tfsig/testutils"
 )
 
 func TestBuild_panic(t *testing.T) {
-	cases := map[string]struct {
-		value BodyElement
-	}{
-		"AttributeBlock": {NewBodyAttribute("name", cty.StringVal("value"))},
-		"BodyEmptyLine":  {NewBodyEmptyLine()},
-	}
+	t.Parallel()
 
 	expectedError := "element is not a body block"
-	for tcname, tc := range cases {
+	cases := map[string]struct {
+		value tfsig.BodyElement
+	}{
+		"AttributeBlock": {tfsig.NewBodyAttribute("name", cty.StringVal("value"))},
+		"BodyEmptyLine":  {tfsig.NewBodyEmptyLine()},
+	}
+
+	for tcname, tcase := range cases {
+		tcase := tcase // For parallel execution
+
 		t.Run(
 			tcname,
 			func(t *testing.T) {
+				t.Parallel()
+
 				testutils.ExpectPanic(
 					t,
-					tcname,
+					t.Name(),
 					func() {
-						tc.value.Build()
+						tcase.value.Build()
 					},
 					expectedError,
 				)
@@ -37,31 +44,40 @@ func TestBuild_panic(t *testing.T) {
 }
 
 func TestGetBodyAttribute(t *testing.T) {
+	t.Parallel()
+
 	attr := cty.StringVal("value")
-	elem := NewBodyAttribute("name", attr)
+	elem := tfsig.NewBodyAttribute("name", attr)
+
 	if !reflect.DeepEqual(attr, *elem.GetBodyAttribute()) {
 		t.Errorf("Mismatch want %#v, got %#v", attr, *elem.GetBodyAttribute())
 	}
 }
 
 func TestGetBodyAttribute_panic(t *testing.T) {
-	cases := map[string]struct {
-		value BodyElement
-	}{
-		"BodyBlock":     {NewBodyBlock(NewEmptyResource("res", "id"))},
-		"BodyEmptyLine": {NewBodyEmptyLine()},
-	}
+	t.Parallel()
 
 	expectedError := "element is not a body attribute"
-	for tcname, tc := range cases {
+	cases := map[string]struct {
+		value tfsig.BodyElement
+	}{
+		"BodyBlock":     {tfsig.NewBodyBlock(tfsig.NewEmptyResource("res", "id"))},
+		"BodyEmptyLine": {tfsig.NewBodyEmptyLine()},
+	}
+
+	for tcname, tcase := range cases {
+		tcase := tcase // For parallel execution
+
 		t.Run(
 			tcname,
 			func(t *testing.T) {
+				t.Parallel()
+
 				testutils.ExpectPanic(
 					t,
-					tcname,
+					t.Name(),
 					func() {
-						tc.value.GetBodyAttribute()
+						tcase.value.GetBodyAttribute()
 					},
 					expectedError,
 				)
@@ -71,8 +87,10 @@ func TestGetBodyAttribute_panic(t *testing.T) {
 }
 
 func TestGetBodyBlock(t *testing.T) {
-	block := NewEmptyResource("res", "id")
-	elem := NewBodyBlock(block)
+	t.Parallel()
+
+	block := tfsig.NewEmptyResource("res", "id")
+	elem := tfsig.NewBodyBlock(block)
 
 	if !reflect.DeepEqual(block, elem.GetBodyBlock()) {
 		t.Errorf("Mismatch want %#v, got %#v", block, elem.GetBodyBlock())
@@ -82,23 +100,29 @@ func TestGetBodyBlock(t *testing.T) {
 }
 
 func TestGetBodyBlock_panic(t *testing.T) {
-	cases := map[string]struct {
-		value BodyElement
-	}{
-		"AttributeBlock": {NewBodyAttribute("name", cty.StringVal("value"))},
-		"BodyEmptyLine":  {NewBodyEmptyLine()},
-	}
+	t.Parallel()
 
 	expectedError := "element is not a body block"
-	for tcname, tc := range cases {
+	cases := map[string]struct {
+		value tfsig.BodyElement
+	}{
+		"AttributeBlock": {tfsig.NewBodyAttribute("name", cty.StringVal("value"))},
+		"BodyEmptyLine":  {tfsig.NewBodyEmptyLine()},
+	}
+
+	for tcname, tcase := range cases {
+		tcase := tcase // For parallel execution
+
 		t.Run(
 			tcname,
 			func(t *testing.T) {
+				t.Parallel()
+
 				testutils.ExpectPanic(
 					t,
-					tcname,
+					t.Name(),
 					func() {
-						tc.value.GetBodyBlock()
+						tcase.value.GetBodyBlock()
 					},
 					expectedError,
 				)
