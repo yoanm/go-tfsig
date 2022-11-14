@@ -14,23 +14,18 @@ import (
 
 /** Public **/
 
-// NewSignature returns a BlockSignature pointer filled with provided labels and elements.
-func NewSignature(name string, labels []string, elements BodyElements) *BlockSignature {
+// NewSignature returns a BlockSignature pointer filled with provided type and labels.
+func NewSignature(name string, labels ...string) *BlockSignature {
 	return &BlockSignature{
 		typeName: name,
 		labels:   labels,
-		elements: elements,
+		elements: BodyElements{},
 	}
 }
 
-// NewEmptySignature returns a BlockSignature pointer filled with provided labels.
-func NewEmptySignature(name string, labels ...string) *BlockSignature {
-	return NewSignature(name, labels, BodyElements{})
-}
-
-// NewEmptyResource returns a BlockSignature pointer with "resource" type and filled with provided labels.
-func NewEmptyResource(name, id string, labels ...string) *BlockSignature {
-	return NewEmptySignature("resource", append([]string{name, id}, labels...)...)
+// NewResource returns a BlockSignature pointer with "resource" type and filled with provided labels.
+func NewResource(name, id string, labels ...string) *BlockSignature {
+	return NewSignature("resource", append([]string{name, id}, labels...)...)
 }
 
 // BlockSignature is basically a wrapper to HCL blocks

@@ -106,7 +106,8 @@ func MergeIterableAndGenerate(collection cty.Value, newElements []hclwrite.Token
 	return tokensEnd.BuildTokens(newTokens)
 }
 
-// SplitIterable takes a `cty.Value` collection and returns the start/end tokens and the existing elements
+// SplitIterable takes a `cty.Value` collection and returns the start tokens, the existing elements tokens
+// and the end tokens
 //
 // It can be used to later append new elements to the collection (see `MergeIterableAndGenerate()`)
 //

@@ -7,12 +7,10 @@ to manage those type of value
 
 ## Constants
 
+HclwriteTokensCtyTypeName is the friendly cty name for the capsule encapsulating `hclwrite.Tokens`.
+
 ```golang
-const (
-    // HclwriteTokensCtyTypeName is the friendly cty name for the capsule encapsulating `hclwrite.Tokens`.
-    //nolint:gosec // disabled as linter thinks it's an hardcoded credential
-    HclwriteTokensCtyTypeName = "cty.CapsuleVal(hclwrite.Tokens)"
-)
+const HclwriteTokensCtyTypeName = "cty.CapsuleVal(hclwrite.Tokens)"
 ```
 
 ## Functions
@@ -24,7 +22,7 @@ const (
 ContainsCapsule will deep check if provided value contains a special capsule encapsulating `hclwrite.Tokens`
 (and therefore requires special process to de-encapsulate it).
 
-### func [FromValue](./main.go#L65)
+### func [FromValue](./main.go#L64)
 
 `func FromValue(v cty.Value) hclwrite.Tokens`
 
@@ -201,11 +199,11 @@ NewEqualTokens creates a `hclwrite.Tokens` containing a `hclwrite.Token` with `h
 
 See also `NewEqualToken()`.
 
-### func [NewIdentListValue](./main.go#L37)
+### func [NewIdentListValue](./main.go#L36)
 
 `func NewIdentListValue(list []string) *cty.Value`
 
-NewIdentListValue tales a list of string which should be all considered as 'ident' tokens
+NewIdentListValue takes a list of string which should be all considered as 'ident' tokens
 and converts them into a cty list containing special `cty.Value` capsule.
 
 ```golang
@@ -251,7 +249,7 @@ with `hclsyntax.TokenIdent` type
 
 See also `NewIdentToken()`.
 
-### func [NewIdentValue](./main.go#L29)
+### func [NewIdentValue](./main.go#L28)
 
 `func NewIdentValue(s string) *cty.Value`
 
@@ -300,7 +298,7 @@ NewLineTokens creates a `hclwrite.Tokens` containing a `hclwrite.Token` with `hc
 
 See also `NewLineToken()`.
 
-### func [SplitIterable](./generator.go#L114)
+### func [SplitIterable](./generator.go#L115)
 
 `func SplitIterable(collection cty.Value) (
     hclwrite.Tokens,
@@ -308,7 +306,8 @@ See also `NewLineToken()`.
     hclwrite.Tokens,
 )`
 
-SplitIterable takes a `cty.Value` collection and returns the start/end tokens and the existing elements
+SplitIterable takes a `cty.Value` collection and returns the start tokens, the existing elements tokens
+and the end tokens
 
 It can be used to later append new elements to the collection (see `MergeIterableAndGenerate()`)
 
@@ -454,7 +453,7 @@ Tuple:
 	End: "]"
 ```
 
-### func [ToValue](./main.go#L58)
+### func [ToValue](./main.go#L57)
 
 `func ToValue(tokens hclwrite.Tokens) cty.Value`
 

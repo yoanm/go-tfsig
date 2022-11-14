@@ -26,7 +26,7 @@ evenFn := func(i int) *cty.Value {
     return &val
 }
 
-sig := tfsig.NewEmptyResource("my_res", "res_id")
+sig := tfsig.NewResource("my_res", "res_id")
 
 tfsig.AppendAttributeIfNotNil(sig, "attr_0", evenFn(0))
 tfsig.AppendAttributeIfNotNil(sig, "attr_1", evenFn(1))
@@ -63,7 +63,7 @@ evenFn := func(i int) *hclwrite.Block {
         return nil
     }
 
-    return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
+    return tfsig.NewSignature(fmt.Sprintf("block%d", i)).Build()
 }
 
 tfsig.AppendBlockIfNotNil(hclFile.Body(), evenFn(0))
@@ -100,10 +100,10 @@ oddFn := func(i int) *tfsig.BlockSignature {
         return nil
     }
 
-    return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i))
+    return tfsig.NewSignature(fmt.Sprintf("block%d", i))
 }
 
-sig := tfsig.NewEmptyResource("my_res", "res_id")
+sig := tfsig.NewResource("my_res", "res_id")
 
 tfsig.AppendChildIfNotNil(sig, oddFn(0))
 tfsig.AppendChildIfNotNil(sig, oddFn(1))
@@ -147,7 +147,7 @@ oddFn := func(i int) *hclwrite.Block {
         return nil
     }
 
-    return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
+    return tfsig.NewSignature(fmt.Sprintf("block%d", i)).Build()
 }
 
 tfsig.AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(0))
@@ -198,62 +198,56 @@ an.identifier becomes an-identifier
 
 ## Types
 
-### type [BlockSignature](/block_signature.go#L38)
+### type [BlockSignature](/block_signature.go#L33)
 
 `type BlockSignature struct { ... }`
 
 BlockSignature is basically a wrapper to HCL blocks
 It holds a type, the block labels and its elements.
 
-#### func [NewEmptyResource](/block_signature.go#L32)
+#### func [NewResource](/block_signature.go#L27)
 
-`func NewEmptyResource(name, id string, labels ...string) *BlockSignature`
+`func NewResource(name, id string, labels ...string) *BlockSignature`
 
-NewEmptyResource returns a BlockSignature pointer with "resource" type and filled with provided labels.
-
-#### func [NewEmptySignature](/block_signature.go#L27)
-
-`func NewEmptySignature(name string, labels ...string) *BlockSignature`
-
-NewEmptySignature returns a BlockSignature pointer filled with provided labels.
+NewResource returns a BlockSignature pointer with "resource" type and filled with provided labels.
 
 #### func [NewSignature](/block_signature.go#L18)
 
-`func NewSignature(name string, labels []string, elements BodyElements) *BlockSignature`
+`func NewSignature(name string, labels ...string) *BlockSignature`
 
-NewSignature returns a BlockSignature pointer filled with provided labels and elements.
+NewSignature returns a BlockSignature pointer filled with provided type and labels.
 
-#### func (*BlockSignature) [AppendAttribute](/block_signature.go#L70)
+#### func (*BlockSignature) [AppendAttribute](/block_signature.go#L65)
 
 `func (sig *BlockSignature) AppendAttribute(name string, value cty.Value)`
 
 AppendAttribute appends an attribute to the block.
 
-#### func (*BlockSignature) [AppendChild](/block_signature.go#L75)
+#### func (*BlockSignature) [AppendChild](/block_signature.go#L70)
 
 `func (sig *BlockSignature) AppendChild(child *BlockSignature)`
 
 AppendChild appends a child block to the block.
 
-#### func (*BlockSignature) [AppendElement](/block_signature.go#L65)
+#### func (*BlockSignature) [AppendElement](/block_signature.go#L60)
 
 `func (sig *BlockSignature) AppendElement(element BodyElement)`
 
 AppendElement appends an element to the block.
 
-#### func (*BlockSignature) [AppendEmptyLine](/block_signature.go#L80)
+#### func (*BlockSignature) [AppendEmptyLine](/block_signature.go#L75)
 
 `func (sig *BlockSignature) AppendEmptyLine()`
 
 AppendEmptyLine appends an empty line to the block.
 
-#### func (*BlockSignature) [Build](/block_signature.go#L85)
+#### func (*BlockSignature) [Build](/block_signature.go#L80)
 
 `func (sig *BlockSignature) Build() *hclwrite.Block`
 
 Build creates a `hclwrite.Block` and appends block's elements to it.
 
-#### func (*BlockSignature) [BuildTokens](/block_signature.go#L94)
+#### func (*BlockSignature) [BuildTokens](/block_signature.go#L89)
 
 `func (sig *BlockSignature) BuildTokens() hclwrite.Tokens`
 
@@ -267,7 +261,7 @@ DependsOn adds an empty line and the 'depends_on' terraform directive with provi
 
 ```golang
 // resource with 'depends_on' directive
-sig := tfsig.NewEmptyResource("res_name", "res_id")
+sig := tfsig.NewResource("res_name", "res_id")
 sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 sig.DependsOn([]string{"another_res.res_id", "another_another_res.res_id"})
 
@@ -287,19 +281,19 @@ resource "res_name" "res_id" {
 }
 ```
 
-#### func (*BlockSignature) [GetElements](/block_signature.go#L55)
+#### func (*BlockSignature) [GetElements](/block_signature.go#L50)
 
 `func (sig *BlockSignature) GetElements() BodyElements`
 
 GetElements returns all elements attached to the block.
 
-#### func (*BlockSignature) [GetLabels](/block_signature.go#L50)
+#### func (*BlockSignature) [GetLabels](/block_signature.go#L45)
 
 `func (sig *BlockSignature) GetLabels() []string`
 
 GetLabels returns labels attached to the block.
 
-#### func (*BlockSignature) [GetType](/block_signature.go#L45)
+#### func (*BlockSignature) [GetType](/block_signature.go#L40)
 
 `func (sig *BlockSignature) GetType() string`
 
@@ -313,23 +307,19 @@ Lifecycle adds an empty line and the 'lifecycle' terraform directive and then ap
 
 ```golang
 // resource with 'lifecycle' directive
-sig := tfsig.NewEmptyResource("res_name", "res_id")
+sig := tfsig.NewResource("res_name", "res_id")
 sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 
-config := tfsig.LifecycleConfig{} //nolint:exhaustruct // deactivated as goal it to use helper methods instead
+config := tfsig.LifecycleConfig{}
 config.SetCreateBeforeDestroy(true)
 config.SetPreventDestroy(false)
 sig.Lifecycle(config)
 
-sig2 := tfsig.NewEmptyResource("res2_name", "res2_id")
+sig2 := tfsig.NewResource("res2_name", "res2_id")
 sig2.AppendAttribute("attribute1", cty.StringVal("value1"))
 
 config2 := tfsig.LifecycleConfig{
-    CreateBeforeDestroy: nil,
-    PreventDestroy:      nil,
-    IgnoreChanges:       []string{"attribute1"},
-    ReplaceTriggeredBy:  nil,
-    Precondition:        nil,
+    IgnoreChanges: []string{"attribute1"},
     Postcondition: &tfsig.LifecycleCondition{
         Condition:    "res_name.res_id.attribute1 != \"value1\"",
         ErrorMessage: "res_name.res_id.attribute1 must equal \"value1\"",
@@ -368,7 +358,7 @@ resource "res2_name" "res2_id" {
 }
 ```
 
-#### func (*BlockSignature) [SetElements](/block_signature.go#L60)
+#### func (*BlockSignature) [SetElements](/block_signature.go#L55)
 
 `func (sig *BlockSignature) SetElements(elements BodyElements)`
 
@@ -552,7 +542,7 @@ identStringValue := "explicit_ident.foo"
 identListStringValue := []string{"explicit_ident_item.foo", "explicit_ident_item.bar"}
 
 valGen := tfsig.NewValueGenerator()
-sig := tfsig.NewEmptySignature("my_block")
+sig := tfsig.NewSignature("my_block")
 sig.AppendAttribute("attr1", *valGen.ToString(&basicStringValue))
 sig.AppendAttribute("attr2", *valGen.ToString(&localVal))
 sig.AppendAttribute("attr3", *valGen.ToString(&varVal))
@@ -660,7 +650,7 @@ If a provided string item is actually an 'ident' token, `cty.Value` item will be
 
 ```golang
 // Create a resource block
-sig := tfsig.NewEmptyResource("res_name", "res_id")
+sig := tfsig.NewResource("res_name", "res_id")
 sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 sig.AppendEmptyLine()
 sig.AppendAttribute("attribute2", cty.BoolVal(true))
@@ -689,7 +679,7 @@ resource "res_name" "res_id" {
 
 ```golang
 // Reorder an existing signature
-sig := tfsig.NewEmptyResource("res_name", "res_id")
+sig := tfsig.NewResource("res_name", "res_id")
 sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 sig.AppendAttribute("attribute2", cty.BoolVal(true))
 sig.AppendAttribute("attribute3", cty.NumberFloatVal(-12.34))

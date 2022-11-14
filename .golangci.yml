@@ -149,3 +149,6 @@ issues:
         - gosec
         - noctx
         - wrapcheck
+    - path: "example_test\\.go"
+      linters:
+        - exhaustruct # Deactivated for examples as it's easier and looks better

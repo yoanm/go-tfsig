@@ -9,11 +9,13 @@ import (
 	"github.com/hashicorp/hcl/v2/hclwrite"
 )
 
+// ExpectedMismatchError is an error wrapping expected and actual value when they don't match.
 type ExpectedMismatchError struct {
 	expected string
 	actual   string
 }
 
+// Error is a basic implementation of `error` interface, it returns a formatted error message.
 func (e ExpectedMismatchError) Error() string {
 	return fmt.Sprintf("\n- expected\n+ actual\n\n%s", diff.LineDiff(e.expected, e.actual))
 }

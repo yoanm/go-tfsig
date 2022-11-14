@@ -11,7 +11,7 @@ import (
 
 func Example() {
 	// Create a resource block
-	sig := tfsig.NewEmptyResource("res_name", "res_id")
+	sig := tfsig.NewResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 	sig.AppendEmptyLine()
 	sig.AppendAttribute("attribute2", cty.BoolVal(true))
@@ -34,7 +34,7 @@ func Example() {
 
 func Example_enhance_existing() {
 	// Enhance an existing signature
-	sig := tfsig.NewEmptyResource("res_name", "res_id")
+	sig := tfsig.NewResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 	sig.AppendEmptyLine()
 	sig.AppendAttribute("attribute2", cty.BoolVal(true))
@@ -75,7 +75,7 @@ func Example_enhance_existing() {
 
 func Example_reorder() {
 	// Reorder an existing signature
-	sig := tfsig.NewEmptyResource("res_name", "res_id")
+	sig := tfsig.NewResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 	sig.AppendAttribute("attribute2", cty.BoolVal(true))
 	sig.AppendAttribute("attribute3", cty.NumberFloatVal(-12.34))

@@ -61,7 +61,7 @@ func TestGetBodyAttribute_panic(t *testing.T) {
 	cases := map[string]struct {
 		value tfsig.BodyElement
 	}{
-		"BodyBlock":     {tfsig.NewBodyBlock(tfsig.NewEmptyResource("res", "id"))},
+		"BodyBlock":     {tfsig.NewBodyBlock(tfsig.NewResource("res", "id"))},
 		"BodyEmptyLine": {tfsig.NewBodyEmptyLine()},
 	}
 
@@ -89,7 +89,7 @@ func TestGetBodyAttribute_panic(t *testing.T) {
 func TestGetBodyBlock(t *testing.T) {
 	t.Parallel()
 
-	block := tfsig.NewEmptyResource("res", "id")
+	block := tfsig.NewResource("res", "id")
 	elem := tfsig.NewBodyBlock(block)
 
 	if !reflect.DeepEqual(block, elem.GetBodyBlock()) {

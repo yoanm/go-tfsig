@@ -65,7 +65,7 @@ type LifecycleCondition struct {
 
 // Lifecycle adds an empty line and the 'lifecycle' terraform directive and then append provided lifecycle attributes.
 func (sig *BlockSignature) Lifecycle(config LifecycleConfig) {
-	lifecycleSig := NewEmptySignature("lifecycle")
+	lifecycleSig := NewSignature("lifecycle")
 
 	appendLifecycleBoolAttribute(lifecycleSig, "create_before_destroy", config.CreateBeforeDestroy)
 	appendLifecycleBoolAttribute(lifecycleSig, "prevent_destroy", config.PreventDestroy)
@@ -88,7 +88,7 @@ func appendLifecycleConditionBlock(lifecycleSig *BlockSignature, name string, lc
 		return
 	}
 
-	cond := NewEmptySignature(name)
+	cond := NewSignature(name)
 
 	cond.AppendAttribute("condition", *tokens.NewIdentValue(lcCond.Condition))
 	cond.AppendAttribute("error_message", cty.StringVal(lcCond.ErrorMessage))

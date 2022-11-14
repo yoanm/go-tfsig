@@ -44,9 +44,8 @@ func TestNewValueGenerator(t *testing.T) {
 			func(t *testing.T) {
 				t.Parallel()
 
-				sig := tfsig.NewSignature(
-					"sig",
-					nil,
+				sig := tfsig.NewSignature("sig")
+				sig.SetElements(
 					tfsig.BodyElements{
 						tfsig.NewBodyAttribute("basic", *tcase.value.ToString(&basicStringValue)),
 						tfsig.NewBodyAttribute("custom", *tcase.value.ToString(&customStringValue)),

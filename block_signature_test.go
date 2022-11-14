@@ -15,15 +15,15 @@ import (
 func TestNewEmptyResource(t *testing.T) {
 	t.Parallel()
 
-	resFull := tfsig.NewEmptyResource("res_name", "res_id")
+	resFull := tfsig.NewResource("res_name", "res_id")
 	resFull.AppendAttribute("attribute1", cty.StringVal("value1"))
 	resFull.AppendEmptyLine()
 
-	block1 := tfsig.NewEmptySignature("block1", "block1_label1", "block1_label2", "block1_label3", "block1_label4")
+	block1 := tfsig.NewSignature("block1", "block1_label1", "block1_label2", "block1_label3", "block1_label4")
 	block1.AppendAttribute("attribute21", cty.BoolVal(true))
 	block1.AppendAttribute("attribute22", cty.NumberIntVal(3))
 
-	block11 := tfsig.NewEmptySignature("block11")
+	block11 := tfsig.NewSignature("block11")
 	listAttr, _ := gocty.ToCtyValue([]string{"A", "B"}, cty.List(cty.String))
 	block11.AppendAttribute("attribute211", listAttr)
 	block11.AppendEmptyLine()
@@ -45,7 +45,7 @@ func TestNewEmptyResource(t *testing.T) {
 			"resource.full",
 		},
 		"Empty": {
-			tfsig.NewEmptyResource("res_name", "res_id"),
+			tfsig.NewResource("res_name", "res_id"),
 			"resource.empty",
 		},
 	}
@@ -68,15 +68,15 @@ func TestNewEmptyResource(t *testing.T) {
 func TestBlockSignature_BuildTokens(t *testing.T) {
 	t.Parallel()
 
-	res := tfsig.NewEmptyResource("res_name", "res_id")
+	res := tfsig.NewResource("res_name", "res_id")
 	res.AppendAttribute("attribute1", cty.StringVal("value1"))
 	res.AppendEmptyLine()
 
-	block1 := tfsig.NewEmptySignature("block1", "block1_label1", "block1_label2", "block1_label3", "block1_label4")
+	block1 := tfsig.NewSignature("block1", "block1_label1", "block1_label2", "block1_label3", "block1_label4")
 	block1.AppendAttribute("attribute21", cty.BoolVal(true))
 	block1.AppendAttribute("attribute22", cty.NumberIntVal(3))
 
-	block11 := tfsig.NewEmptySignature("block11")
+	block11 := tfsig.NewSignature("block11")
 	listAttr, _ := gocty.ToCtyValue([]string{"A", "B"}, cty.List(cty.String))
 	block11.AppendAttribute("attribute211", listAttr)
 	block11.AppendEmptyLine()

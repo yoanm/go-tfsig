@@ -11,7 +11,7 @@ import (
 
 func ExampleBlockSignature_DependsOn() {
 	// resource with 'depends_on' directive
-	sig := tfsig.NewEmptyResource("res_name", "res_id")
+	sig := tfsig.NewResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 	sig.DependsOn([]string{"another_res.res_id", "another_another_res.res_id"})
 
@@ -29,23 +29,19 @@ func ExampleBlockSignature_DependsOn() {
 
 func ExampleBlockSignature_Lifecycle() {
 	// resource with 'lifecycle' directive
-	sig := tfsig.NewEmptyResource("res_name", "res_id")
+	sig := tfsig.NewResource("res_name", "res_id")
 	sig.AppendAttribute("attribute1", cty.StringVal("value1"))
 
-	config := tfsig.LifecycleConfig{} //nolint:exhaustruct // deactivated as goal it to use helper methods instead
+	config := tfsig.LifecycleConfig{}
 	config.SetCreateBeforeDestroy(true)
 	config.SetPreventDestroy(false)
 	sig.Lifecycle(config)
 
-	sig2 := tfsig.NewEmptyResource("res2_name", "res2_id")
+	sig2 := tfsig.NewResource("res2_name", "res2_id")
 	sig2.AppendAttribute("attribute1", cty.StringVal("value1"))
 
 	config2 := tfsig.LifecycleConfig{
-		CreateBeforeDestroy: nil,
-		PreventDestroy:      nil,
-		IgnoreChanges:       []string{"attribute1"},
-		ReplaceTriggeredBy:  nil,
-		Precondition:        nil,
+		IgnoreChanges: []string{"attribute1"},
 		Postcondition: &tfsig.LifecycleCondition{
 			Condition:    "res_name.res_id.attribute1 != \"value1\"",
 			ErrorMessage: "res_name.res_id.attribute1 must equal \"value1\"",

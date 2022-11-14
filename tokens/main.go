@@ -15,13 +15,12 @@ import (
 	"github.com/zclconf/go-cty/cty/gocty"
 )
 
-const (
-	// HclwriteTokensCtyTypeName is the friendly cty name for the capsule encapsulating `hclwrite.Tokens`.
-	//nolint:gosec // disabled as linter thinks it's an hardcoded credential
-	HclwriteTokensCtyTypeName = "cty.CapsuleVal(hclwrite.Tokens)"
-)
+// HclwriteTokensCtyTypeName is the friendly cty name for the capsule encapsulating `hclwrite.Tokens`.
+//
+//nolint:gosec // disabled as linter thinks it's an hardcoded credential
+const HclwriteTokensCtyTypeName = "cty.CapsuleVal(hclwrite.Tokens)"
 
-//nolint:gochecknoglobals // disabled as I don't see any other way to share it between two functions below
+//nolint:gochecknoglobals // Better to keep it as **internal** global var than define it each time
 var hclwriteTokensCtyType = cty.Capsule(HclwriteTokensCtyTypeName, reflect.TypeOf(hclwrite.Tokens{}))
 
 // NewIdentValue takes a string which should be considered as 'ident' token and converts it
@@ -32,7 +31,7 @@ func NewIdentValue(s string) *cty.Value {
 	return &val
 }
 
-// NewIdentListValue tales a list of string which should be all considered as 'ident' tokens
+// NewIdentListValue takes a list of string which should be all considered as 'ident' tokens
 // and converts them into a cty list containing special `cty.Value` capsule.
 func NewIdentListValue(list []string) *cty.Value {
 	if list == nil {

@@ -16,7 +16,7 @@ func ExampleAppendBlockIfNotNil() {
 			return nil
 		}
 
-		return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
+		return tfsig.NewSignature(fmt.Sprintf("block%d", i)).Build()
 	}
 
 	tfsig.AppendBlockIfNotNil(hclFile.Body(), evenFn(0))
@@ -40,7 +40,7 @@ func ExampleAppendNewLineAndBlockIfNotNil() {
 			return nil
 		}
 
-		return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i)).Build()
+		return tfsig.NewSignature(fmt.Sprintf("block%d", i)).Build()
 	}
 
 	tfsig.AppendNewLineAndBlockIfNotNil(hclFile.Body(), oddFn(0))
@@ -73,7 +73,7 @@ func ExampleAppendAttributeIfNotNil() {
 		return &val
 	}
 
-	sig := tfsig.NewEmptyResource("my_res", "res_id")
+	sig := tfsig.NewResource("my_res", "res_id")
 
 	tfsig.AppendAttributeIfNotNil(sig, "attr_0", evenFn(0))
 	tfsig.AppendAttributeIfNotNil(sig, "attr_1", evenFn(1))
@@ -98,10 +98,10 @@ func ExampleAppendChildIfNotNil() {
 			return nil
 		}
 
-		return tfsig.NewEmptySignature(fmt.Sprintf("block%d", i))
+		return tfsig.NewSignature(fmt.Sprintf("block%d", i))
 	}
 
-	sig := tfsig.NewEmptyResource("my_res", "res_id")
+	sig := tfsig.NewResource("my_res", "res_id")
 
 	tfsig.AppendChildIfNotNil(sig, oddFn(0))
 	tfsig.AppendChildIfNotNil(sig, oddFn(1))
