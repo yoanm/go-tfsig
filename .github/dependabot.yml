@@ -4,3 +4,10 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    groups:
+        gomod-patch:
+          update-types: ["patch"]
+        gomod-minor:
+          update-types: ["minor"]
+        gomod-others:
+          patterns: [ "*" ]
