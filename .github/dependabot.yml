@@ -14,7 +14,5 @@ updates:
     groups:
       gomod-major:
         update-types: ["major"]
-      gomod-minor:
-        update-types: ["minor"]
       gomod-others:
         patterns: [ "*" ]
