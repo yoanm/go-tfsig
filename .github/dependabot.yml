@@ -6,14 +6,14 @@ updates:
       interval: 'monthly'
     groups:
       all-actions:
-        patterns: [ "*" ]
+        patterns: ["*"]
   - package-ecosystem: gomod
     directory: /
     schedule:
       interval: monthly
     groups:
-        gomod-patch:
-          update-types: ["patch"]
+        gomod-major:
+          update-types: ["major"]
         gomod-minor:
           update-types: ["minor"]
         gomod-others:
