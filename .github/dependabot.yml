@@ -12,9 +12,9 @@ updates:
     schedule:
       interval: monthly
     groups:
-        gomod-major:
-          update-types: ["major"]
-        gomod-minor:
-          update-types: ["minor"]
-        gomod-others:
-          patterns: [ "*" ]
+      gomod-major:
+        update-types: ["major"]
+      gomod-minor:
+        update-types: ["minor"]
+      gomod-others:
+        patterns: [ "*" ]
