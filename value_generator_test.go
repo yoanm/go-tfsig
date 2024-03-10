@@ -57,6 +57,7 @@ func TestNewValueGenerator(t *testing.T) {
 						tfsig.NewBodyAttribute("list_of_string", *tcase.value.ToStringList(&listVal)),
 					},
 				)
+
 				if err := testutils.EnsureBlockFileEqualsGoldenFile(sig.Build(), tcase.goldenFile); err != nil {
 					t.Errorf("Case \"%s\": %v", t.Name(), err)
 				}

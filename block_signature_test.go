@@ -57,6 +57,7 @@ func TestNewEmptyResource(t *testing.T) {
 			tcname,
 			func(t *testing.T) {
 				t.Parallel()
+
 				if err := testutils.EnsureBlockFileEqualsGoldenFile(tcase.value.Build(), tcase.goldenFile); err != nil {
 					t.Errorf("Case \"%s\": %v", t.Name(), err)
 				}

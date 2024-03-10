@@ -59,7 +59,9 @@ func TestAppendBlockIfNotNil(t *testing.T) {
 			tcname,
 			func(t *testing.T) {
 				t.Parallel()
+
 				file := hclwrite.NewEmptyFile()
+
 				tfsig.AppendBlockIfNotNil(file.Body(), tcase.Value)
 
 				if err := testutils.EnsureFileContentEquals(file, tcase.Want); err != nil {
