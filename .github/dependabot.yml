@@ -34,7 +34,7 @@ updates:
     directory: /
     schedule:
       interval: monthly
-    versioning-strategy: "widen"
+#    versioning-strategy: "....." # Not applicable (currently) for gomod :/
     commit-message:
       prefix: "[dependabot][prod][gomod] - " # No need to specify prod/dev for Go as there is only "production" packages !
       include: "scope"
