@@ -29,12 +29,11 @@ help: ## ❓ Dislay this help
 configure-dev-env: ## 🤖 Install required libraries for dev environment
 configure-dev-env:
 	go install github.com/posener/goreadme/cmd/goreadme@v1
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1
 .PHONY: configure-test-env
 configure-test-env: ## 🤖 Install required libraries for test environment (golint, staticcheck, etc)
 configure-test-env: configure-dev-env
 configure-test-env:
-	# Nothing to install currently
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.57
 
 ##—— 📝 Documentation —————————————————————————————————————————————————
 .PHONY: build-doc
