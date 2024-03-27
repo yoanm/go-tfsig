@@ -30,7 +30,7 @@ FromValue takes a `cty.Value` and extract the `hclwrite.Tokens` from it.
 
 It panics if the provided value is not a special `cty.Value` capsule.
 
-### func [Generate](./generator.go#L16)
+### func [Generate](./generator.go#L14)
 
 `func Generate(valuePtr *cty.Value) hclwrite.Tokens`
 
@@ -149,7 +149,7 @@ Map of capsule: "{\n\"A\"=A_value\n\"B\"=B_value\n}"
 Tuple with capsule: "[\"A_value\",B_value,2]"
 ```
 
-### func [GenerateFromIterable](./generator.go#L44)
+### func [GenerateFromIterable](./generator.go#L42)
 
 `func GenerateFromIterable(elements []hclwrite.Tokens, toType cty.Type) hclwrite.Tokens`
 
@@ -164,7 +164,7 @@ It panics if provided type is not an iterable type.
 
 IsCapsuleType returns true if provided `cty.Type` is a special capsule encapsulating `hclwrite.Tokens`.
 
-### func [MergeIterableAndGenerate](./generator.go#L69)
+### func [MergeIterableAndGenerate](./generator.go#L67)
 
 `func MergeIterableAndGenerate(collection cty.Value, newElements []hclwrite.Tokens) hclwrite.Tokens`
 
@@ -304,7 +304,7 @@ NewLineTokens creates a `hclwrite.Tokens` containing a `hclwrite.Token` with `hc
 
 See also `NewLineToken()`.
 
-### func [SplitIterable](./generator.go#L115)
+### func [SplitIterable](./generator.go#L113)
 
 `func SplitIterable(collection cty.Value) (
     hclwrite.Tokens,

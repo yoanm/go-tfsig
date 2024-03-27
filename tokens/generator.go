@@ -1,8 +1,6 @@
 package tokens
 
 import (
-	"fmt"
-
 	"github.com/hashicorp/hcl/v2/hclsyntax"
 	"github.com/hashicorp/hcl/v2/hclwrite"
 	"github.com/zclconf/go-cty/cty"
@@ -56,7 +54,7 @@ func GenerateFromIterable(elements []hclwrite.Tokens, toType cty.Type) hclwrite.
 	case toType.IsObjectType():
 		emptyCollectionValue = cty.EmptyObjectVal
 	default:
-		panic(fmt.Sprintf("expected a collection type but got %s", toType.GoString()))
+		panic("expected a collection type but got " + toType.GoString())
 	}
 
 	return MergeIterableAndGenerate(emptyCollectionValue, elements)
@@ -83,9 +81,9 @@ func MergeIterableAndGenerate(collection cty.Value, newElements []hclwrite.Token
 			addSeparator = len(existingElements) > 0
 		} else {
 			// Separate elements with a new line for Objects and Maps
-			separator = NewLineTokens()
 			// Objects and Maps already have a trailing new line if not empty
 			// => separator must be added only after a new element is added
+			separator = NewLineTokens()
 		}
 
 		for _, elem := range newElements {
@@ -118,7 +116,7 @@ func SplitIterable(collection cty.Value) (
 	/* tokensEnd */ hclwrite.Tokens,
 ) {
 	if !collection.CanIterateElements() {
-		panic(fmt.Sprintf("expected an iterable type but got %s", collection.Type().GoString()))
+		panic("expected an iterable type but got " + collection.Type().GoString())
 	}
 
 	var start, elems, end hclwrite.Tokens

@@ -37,8 +37,6 @@ func TestNewValueGenerator(t *testing.T) {
 	}
 
 	for tcname, tcase := range cases {
-		tcase := tcase // For parallel execution
-
 		t.Run(
 			tcname,
 			func(t *testing.T) {
@@ -57,6 +55,7 @@ func TestNewValueGenerator(t *testing.T) {
 						tfsig.NewBodyAttribute("list_of_string", *tcase.value.ToStringList(&listVal)),
 					},
 				)
+
 				if err := testutils.EnsureBlockFileEqualsGoldenFile(sig.Build(), tcase.goldenFile); err != nil {
 					t.Errorf("Case \"%s\": %v", t.Name(), err)
 				}
@@ -100,8 +99,6 @@ func TestValueGenerator_nil(t *testing.T) {
 	}
 
 	for tcname, tcase := range cases {
-		tcase := tcase // For parallel execution
-
 		t.Run(
 			tcname,
 			func(t *testing.T) {
