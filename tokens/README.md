@@ -43,9 +43,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/yoanm/go-tfsig/tokens"
+
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
+
+	"github.com/yoanm/go-tfsig/tokens"
 )
 
 func main() {
@@ -211,7 +213,9 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/hcl/v2/hclwrite"
+
 	"github.com/yoanm/go-tfsig/tokens"
 )
 
@@ -261,7 +265,9 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/hashicorp/hcl/v2/hclwrite"
+
 	"github.com/yoanm/go-tfsig/tokens"
 )
 
@@ -318,9 +324,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/yoanm/go-tfsig/tokens"
+
 	"github.com/zclconf/go-cty/cty"
 	"github.com/zclconf/go-cty/cty/gocty"
+
+	"github.com/yoanm/go-tfsig/tokens"
 )
 
 func main() {

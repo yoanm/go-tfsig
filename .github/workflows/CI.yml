@@ -32,7 +32,6 @@ jobs:
         run: make test-go gotest_o="-race -covermode=atomic -coverprofile=coverage.out"
 
       - name: Create coverage group
-        if: ${{ env.COVERAGE_TYPE == 'xdebug' }}
         id: tests-coverage-group
         uses: yoanm/temp-reports-group-workspace/.github/actions/create-action@develop
         with:
