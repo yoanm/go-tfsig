@@ -35,6 +35,7 @@ jobs:
         id: tests-coverage-group
         uses: yoanm/temp-reports-group-workspace/.github/actions/create-action@develop
         with:
+          name: all-reports
           format: clover
           files: coverage.out
           path: build/coverage-groups
