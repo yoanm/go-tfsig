@@ -23,8 +23,6 @@ func TestBuild_panic(t *testing.T) {
 	}
 
 	for tcname, tcase := range cases {
-		tcase := tcase // For parallel execution
-
 		t.Run(
 			tcname,
 			func(t *testing.T) {
@@ -66,8 +64,6 @@ func TestGetBodyAttribute_panic(t *testing.T) {
 	}
 
 	for tcname, tcase := range cases {
-		tcase := tcase // For parallel execution
-
 		t.Run(
 			tcname,
 			func(t *testing.T) {
@@ -111,8 +107,6 @@ func TestGetBodyBlock_panic(t *testing.T) {
 	}
 
 	for tcname, tcase := range cases {
-		tcase := tcase // For parallel execution
-
 		t.Run(
 			tcname,
 			func(t *testing.T) {

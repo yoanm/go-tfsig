@@ -17,7 +17,7 @@ type ExpectedMismatchError struct {
 
 // Error is a basic implementation of `error` interface, it returns a formatted error message.
 func (e ExpectedMismatchError) Error() string {
-	return fmt.Sprintf("\n- expected\n+ actual\n\n%s", diff.LineDiff(e.expected, e.actual))
+	return "\n- expected\n+ actual\n\n" + diff.LineDiff(e.expected, e.actual)
 }
 
 // LoadGoldenFile loads the golden file filename located under 'testdata' directory

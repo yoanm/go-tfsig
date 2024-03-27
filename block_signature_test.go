@@ -51,12 +51,11 @@ func TestNewEmptyResource(t *testing.T) {
 	}
 
 	for tcname, tcase := range cases {
-		tcase := tcase // For parallel execution
-
 		t.Run(
 			tcname,
 			func(t *testing.T) {
 				t.Parallel()
+
 				if err := testutils.EnsureBlockFileEqualsGoldenFile(tcase.value.Build(), tcase.goldenFile); err != nil {
 					t.Errorf("Case \"%s\": %v", t.Name(), err)
 				}
