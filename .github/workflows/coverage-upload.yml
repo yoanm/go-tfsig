@@ -37,6 +37,8 @@ jobs:
     with:
       artifacts-pattern: coverage-groups-*
       run-id: ${{ needs.fetch-info.outputs.run-id }}
+      language: go
+      force-coverage-parser: go
 
   codecov-uploader:
     name: Codecov
