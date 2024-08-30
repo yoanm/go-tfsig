@@ -7,7 +7,7 @@
 ![Dependabot Status](https://flat.badgen.net/github/dependabot/yoanm/go-tfsig)
 ![Last commit](https://badgen.net/github/last-commit/yoanm/go-tfsig)
 
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e1ceed2c5fa24691b3735a7c4b7a73a0)](https://www.codacy.com/gh/yoanm/go-tfsig/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yoanm/go-tfsig&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e1ceed2c5fa24691b3735a7c4b7a73a0)](https://app.codacy.com/gh/yoanm/go-tfsig/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Go Report Card](https://goreportcard.com/badge/github.com/yoanm/go-tfsig?)](https://goreportcard.com/report/github.com/yoanm/go-tfsig)
 
 [![CI](https://github.com/yoanm/go-tfsig/actions/workflows/CI.yml/badge.svg?branch=master)](https://github.com/yoanm/go-tfsig/actions/workflows/CI.yml)
