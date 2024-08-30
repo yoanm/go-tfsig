@@ -4,8 +4,8 @@ go 1.22
 
 require (
 	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883
-	github.com/hashicorp/hcl/v2 v2.20.1
-	github.com/zclconf/go-cty v1.14.4
+	github.com/hashicorp/hcl/v2 v2.22.0
+	github.com/zclconf/go-cty v1.15.0
 )
 
 require (
