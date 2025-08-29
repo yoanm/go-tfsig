@@ -73,14 +73,6 @@ func (e BodyElement) GetBodyBlock() *BlockSignature {
 	return e.block
 }
 
-func (e BodyElement) GetBodyBlock2() *BlockSignature {
-	if !e.IsBodyBlock() {
-		panic("element is not a body block")
-	}
-
-	return e.block
-}
-
 // Build convert the current BodyElement into a `hclwrite.Block`
 //
 // it panics if BodyElement is not a block (use `IsBodyBlock()` first).
