@@ -95,6 +95,19 @@ func TestGetBodyBlock(t *testing.T) {
 	}
 }
 
+func TestGetBodyBlock2(t *testing.T) {
+	t.Parallel()
+
+	block := tfsig.NewResource("res", "id")
+	elem := tfsig.NewBodyBlock(block)
+
+	if !reflect.DeepEqual(block, elem.GetBodyBlock2()) {
+		t.Errorf("Mismatch want %#v, got %#v", block, elem.GetBodyBlock())
+	} else if fmt.Sprintf("%p", block) != fmt.Sprintf("%p", elem.GetBodyBlock()) {
+		t.Errorf("Mismatch want pointer to %p, got %p", block, elem.GetBodyBlock())
+	}
+}
+
 func TestGetBodyBlock_panic(t *testing.T) {
 	t.Parallel()
 
@@ -117,6 +130,36 @@ func TestGetBodyBlock_panic(t *testing.T) {
 					t.Name(),
 					func() {
 						tcase.value.GetBodyBlock()
+					},
+					expectedError,
+				)
+			},
+		)
+	}
+}
+
+func TestGetBodyBlock2_panic(t *testing.T) {
+	t.Parallel()
+
+	expectedError := "element is not a body block"
+	cases := map[string]struct {
+		value tfsig.BodyElement
+	}{
+		"AttributeBlock": {tfsig.NewBodyAttribute("name", cty.StringVal("value"))},
+		"BodyEmptyLine":  {tfsig.NewBodyEmptyLine()},
+	}
+
+	for tcname, tcase := range cases {
+		t.Run(
+			tcname,
+			func(t *testing.T) {
+				t.Parallel()
+
+				testutils.ExpectPanic(
+					t,
+					t.Name(),
+					func() {
+						tcase.value.GetBodyBlock2()
 					},
 					expectedError,
 				)

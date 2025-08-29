@@ -388,7 +388,7 @@ NewBodyBlock returns a Block BodyElement.
 
 NewBodyEmptyLine returns an empty line BodyElement.
 
-#### func (BodyElement) [Build](/body_element.go#L79)
+#### func (BodyElement) [Build](/body_element.go#L87)
 
 `func (e BodyElement) Build() *hclwrite.Block`
 
@@ -411,6 +411,10 @@ It panics if BodyElement is not an attribute (use `IsBodyAttribute()` first).
 GetBodyBlock returns the block behind the BodyElement
 
 it panics if BodyElement is not a block (use `IsBodyBlock()` first).
+
+#### func (BodyElement) [GetBodyBlock2](/body_element.go#L76)
+
+`func (e BodyElement) GetBodyBlock2() *BlockSignature`
 
 #### func (BodyElement) [GetName](/body_element.go#L35)
 
