@@ -105,7 +105,6 @@ linters-settings:
       - prometheus.ExponentialBucketsRange
       - prometheus.LinearBuckets
   govet:
-    check-shadowing: true
     # Enable all analyzers.
     # Default: false
     enable-all: true
